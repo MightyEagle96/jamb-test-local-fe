@@ -9,6 +9,8 @@ import { getSystemInformation } from "../../services/system.service";
 import type { SystemInformation } from "../../types/system";
 import InspectionCardsLoading from "../../components/InspectionCardsLoading";
 import Swal from "sweetalert2";
+import httpService from "../../services/http.service";
+import { toastError } from "../../components/CustomToast";
 
 export default function SystemInspectionPage() {
   const [loading, setLoading] = useState(true);
@@ -172,9 +174,25 @@ export default function SystemInspectionPage() {
       },
 
       buttonsStyling: false,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const { data } = await httpService.post(
+            "/computers/register",
+            system,
+          );
+          toast.success(data.message);
+        } catch (err) {
+          console.error(err);
+
+          toastError(err);
+        }
+      }
     });
 
-    if (!result.isConfirmed) return;
+    // if (!result.isConfirmed) return;
+
+    // await httpService;
 
     // TODO:
     // Call the registration endpoint here.

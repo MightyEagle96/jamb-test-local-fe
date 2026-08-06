@@ -1,10 +1,11 @@
-import LoginPage from "./pages/admin/LoginPage";
 import MainRoute from "./routes/MainRoute";
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <div>
       <MainRoute />
+      <Toaster richColors position="top-right" expand closeButton />
     </div>
   );
 }

@@ -12,18 +12,18 @@ export default function FailurePanel({ onRetry }: Props) {
       <div className="rounded-[32px] border border-red-200 bg-white shadow-lg overflow-hidden">
         {/* Header */}
 
-        <div className="bg-gradient-to-r from-red-600 to-rose-600 px-8 py-10 text-white">
-          <div className="flex items-center gap-5">
-            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 backdrop-blur">
-              <AlertTriangle size={42} />
+        <div className="bg-gradient-to-r from-red-600 to-rose-600 px-6 py-6 md:px-8 md:py-8 text-white">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur lg:h-16 lg:w-16">
+              <AlertTriangle className="h-7 w-7 lg:h-8 lg:w-8" />
             </div>
 
-            <div>
-              <h2 className="text-3xl font-black">
-                SYSTEM SERVICE UNAVAILABLE
+            <div className="min-w-0">
+              <h2 className="text-xl font-black leading-tight md:text-2xl xl:text-3xl">
+                System Service Unavailable
               </h2>
 
-              <p className="mt-3 text-red-100">
+              <p className="mt-2 text-sm leading-6 text-red-100 md:text-base">
                 Unable to communicate with the local JAMB Test Agent.
               </p>
             </div>
@@ -39,13 +39,13 @@ export default function FailurePanel({ onRetry }: Props) {
             <ul className="mt-5 space-y-4">
               <li className="flex items-center gap-3">
                 <span className="text-green-600">✓</span>
-                Local Agent is not running
+                Jamb Test Agent is not running
               </li>
 
-              <li className="flex items-center gap-3">
+              {/* <li className="flex items-center gap-3">
                 <span className="text-green-600">✓</span>
                 Port 45454 is unavailable
-              </li>
+              </li> */}
 
               <li className="flex items-center gap-3">
                 <span className="text-green-600">✓</span>
@@ -83,7 +83,7 @@ export default function FailurePanel({ onRetry }: Props) {
               </span>
             </button>
 
-            <button
+            {/* <button
               className="
                             rounded-2xl
                             border
@@ -98,7 +98,7 @@ export default function FailurePanel({ onRetry }: Props) {
                 <Power size={20} />
                 Exit
               </span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import { NavLink } from "react-router-dom";
 
 import logo from "../assets/logo.png";
 import { useAppUser } from "../contexts/AppUserContext";
+import httpService from "../services/http.service";
 
 const menus = [
   {
@@ -41,6 +42,15 @@ const menus = [
 
 export default function Navbar() {
   const { user } = useAppUser();
+
+  const handleLogout = async () => {
+    try {
+      const { data } = await httpService.get("/centres/logout");
+      if (data) {
+        window.location.href = "/admin";
+      }
+    } catch (error) {}
+  };
   return (
     <header className="sticky top-0 z-50 border-b border-emerald-200/40 bg-white/80 backdrop-blur-2xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
@@ -126,6 +136,7 @@ export default function Navbar() {
           </div>
 
           <button
+            onClick={handleLogout}
             className="
             flex
             items-center

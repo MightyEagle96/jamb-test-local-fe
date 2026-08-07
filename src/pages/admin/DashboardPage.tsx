@@ -11,6 +11,8 @@ import { useState, useEffect } from "react";
 import httpService from "../../services/http.service";
 import { socket } from "../../services/socket.service";
 import Swal from "sweetalert2";
+import { toast } from "sonner";
+import { toastError } from "../../components/CustomToast";
 
 type DashboardProps = {
   registeredComputers: number;
@@ -99,7 +101,7 @@ export default function DashboardPage() {
   }, []);
 
   const uploadComputers = async () => {
-    const result = await Swal.fire({
+    Swal.fire({
       title: "Upload Centre Computers?",
       html: `
       <div style="text-align:left;line-height:1.8">
@@ -154,11 +156,30 @@ export default function DashboardPage() {
         actions: "gap-4 mt-8",
       },
       buttonsStyling: false,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const { data } = await httpService.get("/computers/upload");
+          toast.success(data);
+          //console.log(data);
+        } catch (e) {
+          toastError(e);
+        }
+        // await httpService.post("/computers/upload");
+      }
     });
 
-    if (!result.isConfirmed) return;
-
     // Upload logic goes here...
+  };
+
+  const downloadComputers = async () => {
+    try {
+      const { data } = await httpService.get("/computers/download");
+      toast.success(data);
+      //console.log(data);
+    } catch (e) {
+      toastError(e);
+    }
   };
   return (
     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -296,6 +317,7 @@ export default function DashboardPage() {
               </p>
 
               <button
+                onClick={downloadComputers}
                 className="
           mt-8
           inline-flex

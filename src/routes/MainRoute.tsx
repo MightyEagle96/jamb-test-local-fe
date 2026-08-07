@@ -6,11 +6,12 @@ import { useAuth } from "../hooks/useAuth";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import NotFoundPage from "../pages/NotFoundPage";
+import LoadingPage from "../pages/LoadingPage";
 
 function MainRoute() {
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Page Loading</div>;
+  if (loading) return <LoadingPage />;
   const publicRoutes = [
     { path: "/", element: <HomePage /> },
     { path: "/admin", element: <LoginPage /> },

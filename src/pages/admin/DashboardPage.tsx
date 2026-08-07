@@ -4,10 +4,13 @@ import {
   Network,
   ShieldAlert,
   CheckCircle2,
+  Upload,
+  Download,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import httpService from "../../services/http.service";
 import { socket } from "../../services/socket.service";
+import Swal from "sweetalert2";
 
 type DashboardProps = {
   registeredComputers: number;
@@ -94,6 +97,69 @@ export default function DashboardPage() {
       socket.off("reconnect", onConnect);
     };
   }, []);
+
+  const uploadComputers = async () => {
+    const result = await Swal.fire({
+      title: "Upload Centre Computers?",
+      html: `
+      <div style="text-align:left;line-height:1.8">
+        <p>
+          You are about to upload the computers currently available in your
+          CBT centre to the JAMB central database.
+        </p>
+
+        <div style="
+          margin-top:18px;
+          padding:16px;
+          border-radius:16px;
+          background:#fef2f2;
+          border:1px solid #fecaca;
+          color:#991b1b;
+        ">
+          <strong>Declaration</strong>
+
+          <p style="margin-top:10px">
+            I confirm that every computer being uploaded is exclusively
+            assigned to this CBT centre and has not been registered or shared
+            with any other CBT centre.
+          </p>
+
+          <p style="margin-top:10px">
+            I understand that registering computers belonging to another
+            accredited CBT centre constitutes an examination infraction and
+            may result in sanctions, withdrawal of accreditation and
+            prosecution by the Joint Admissions and Matriculation Board.
+          </p>
+        </div>
+
+        <p style="margin-top:18px">
+          Do you wish to continue?
+        </p>
+      </div>
+    `,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Upload Computers",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+
+      customClass: {
+        popup: "rounded-[28px]",
+        title: "text-slate-800 font-black text-3xl",
+        htmlContainer: "text-slate-600 text-base",
+        confirmButton:
+          "rounded-xl bg-gradient-to-r from-emerald-700 to-green-600 px-6 py-3 font-semibold text-white shadow-lg hover:shadow-xl",
+        cancelButton:
+          "rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 hover:bg-slate-100",
+        actions: "gap-4 mt-8",
+      },
+      buttonsStyling: false,
+    });
+
+    if (!result.isConfirmed) return;
+
+    // Upload logic goes here...
+  };
   return (
     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       <div className="space-y-10">
@@ -145,13 +211,156 @@ export default function DashboardPage() {
         </div>
 
         {/* Placeholder */}
-
+        {/* 
         <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 py-20 text-center">
           <h3 className="text-2xl font-bold text-slate-700">Activity Centre</h3>
 
           <p className="mt-3 text-slate-500">
             Recent registrations, simulations and infractions will appear here.
           </p>
+        </div> */}
+        {/* Quick Actions */}
+
+        <div className="mt-12">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-slate-800">Quick Actions</h2>
+
+            <p className="mt-2 text-slate-500">
+              Synchronize computers with the cloud and manage network
+              simulations for your CBT centre.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Upload Computers */}
+
+            <div className="group rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="flex items-start justify-between">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                  <Upload size={30} />
+                </div>
+
+                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700">
+                  Recommended
+                </span>
+              </div>
+
+              <h3 className="mt-8 text-2xl font-bold text-slate-800">
+                Upload Computers
+              </h3>
+
+              <p className="mt-4 leading-7 text-slate-500">
+                Upload the computers in your facility to the cloud. Please
+                ensure they are not shared with another CBT centre.
+              </p>
+
+              <button
+                onClick={uploadComputers}
+                className="
+          mt-8
+          inline-flex
+          items-center
+          gap-2
+          rounded-2xl
+          bg-gradient-to-r
+          from-emerald-700
+          to-green-600
+          px-6
+          py-4
+          font-semibold
+          text-white
+          transition-all
+          duration-300
+          hover:shadow-lg
+        "
+              >
+                <Upload size={18} />
+                Upload Computers
+              </button>
+            </div>
+
+            {/* Download Computers */}
+
+            <div className="group rounded-3xl border border-slate-200 bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                <Download size={30} />
+              </div>
+
+              <h3 className="mt-8 text-2xl font-bold text-slate-800">
+                Download Computers
+              </h3>
+
+              <p className="mt-4 leading-7 text-slate-500">
+                Uploaded systems to the cloud before? Synchronize now to
+                download the latest registered computers for this CBT centre.
+              </p>
+
+              <button
+                className="
+          mt-8
+          inline-flex
+          items-center
+          gap-2
+          rounded-2xl
+          border
+          border-slate-300
+          bg-white
+          px-6
+          py-4
+          font-semibold
+          text-slate-700
+          transition-all
+          duration-300
+          hover:border-emerald-600
+          hover:bg-emerald-50
+          hover:text-emerald-700
+        "
+              >
+                <Download size={18} />
+                Download Computers
+              </button>
+            </div>
+
+            {/* Create Network Test */}
+
+            <div className="group rounded-3xl border border-slate-200 bg-white p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+                <Network size={30} />
+              </div>
+
+              <h3 className="mt-8 text-2xl font-bold text-slate-800">
+                Create Network Test
+              </h3>
+
+              <p className="mt-4 leading-7 text-slate-500">
+                Generate a new network simulation to verify connectivity and
+                readiness of all registered computers before examination day.
+              </p>
+
+              <button
+                className="
+          mt-8
+          inline-flex
+          items-center
+          gap-2
+          rounded-2xl
+          bg-gradient-to-r
+          from-violet-700
+          to-indigo-600
+          px-6
+          py-4
+          font-semibold
+          text-white
+          transition-all
+          duration-300
+          hover:shadow-lg
+        "
+              >
+                <Network size={18} />
+                Create Test
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

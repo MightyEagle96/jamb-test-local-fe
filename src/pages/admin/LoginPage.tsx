@@ -1,16 +1,27 @@
 import { useState } from "react";
 import logo from "../../assets/logo.png";
+import httpService from "../../services/http.service";
+import { toastError } from "../../components/CustomToast";
 
 export default function LoginPage() {
   const [referenceNumber, setReferenceNumber] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+    try {
+      await httpService.post("/centres/login", {
+        referenceNumber,
+      });
+
+      window.location.assign("/");
+    } catch (error) {
+      toastError(error);
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -100,11 +111,11 @@ export default function LoginPage() {
 
                 {/* Enterprise Badge */}
 
-                <div className="mt-6 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-xl">
+                {/* <div className="mt-6 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-xl">
                   <span className="text-xs font-semibold tracking-[0.25em]">
                     ENTERPRISE EDITION
                   </span>
-                </div>
+                </div> */}
               </div>
 
               {/* ================= BOTTOM ================= */}
@@ -172,20 +183,20 @@ export default function LoginPage() {
               </div>
 
               {/* Form */}
+              <form onSubmit={handleLogin}>
+                <div className="mt-8 lg:mt-10">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700">
+                    Centre Reference Number
+                  </label>
 
-              <div className="mt-8 lg:mt-10">
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Centre Reference Number
-                </label>
-
-                <input
-                  type="text"
-                  value={referenceNumber}
-                  onChange={(e) =>
-                    setReferenceNumber(e.target.value.toUpperCase())
-                  }
-                  placeholder="UTME2017/37020002"
-                  className="
+                  <input
+                    type="text"
+                    value={referenceNumber}
+                    onChange={(e) =>
+                      setReferenceNumber(e.target.value.toUpperCase())
+                    }
+                    placeholder="UTME2017/37020002"
+                    className="
                     w-full
                     rounded-2xl
                     border
@@ -204,15 +215,15 @@ export default function LoginPage() {
                     focus:ring-green-100
                     lg:text-lg
                 "
-                />
-              </div>
+                  />
+                </div>
 
-              {/* Button */}
+                {/* Button */}
 
-              <button
-                disabled={loading}
-                onClick={handleLogin}
-                className="
+                <button
+                  disabled={loading}
+                  onClick={handleLogin}
+                  className="
                 mt-6
                 flex
                 w-full
@@ -236,17 +247,17 @@ export default function LoginPage() {
                 lg:py-5
                 lg:text-lg
             "
-              >
-                {loading ? (
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    Authenticating...
-                  </div>
-                ) : (
-                  "Login"
-                )}
-              </button>
-
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-3">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                      Authenticating...
+                    </div>
+                  ) : (
+                    "Login"
+                  )}
+                </button>
+              </form>
               {/* Notice */}
 
               <p className="mt-6 text-center text-xs leading-6 text-slate-400 lg:text-sm">

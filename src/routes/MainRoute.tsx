@@ -1,19 +1,26 @@
-import React from "react";
 import HomePage from "../pages/user/HomePage";
 import LoginPage from "../pages/admin/LoginPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import DashboardPage from "../pages/admin/DashboardPage";
+import { useAuth } from "../hooks/useAuth";
 
 function MainRoute() {
-  const adminRoutes = [{ path: "/", element: <LoginPage /> }];
+  const { user, loading } = useAuth();
 
-  const userRoutes = [{ path: "/", element: <HomePage /> }];
+  if (loading) return <div>Page Loading</div>;
+  const publicRoutes = [
+    { path: "/", element: <HomePage /> },
+    { path: "/admin", element: <LoginPage /> },
+  ];
+
+  const privateRoutes = [{ path: "/", element: <DashboardPage /> }];
+
+  const routesToShow = user ? privateRoutes : publicRoutes;
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* {adminRoutes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))} */}
-        {userRoutes.map((route) => (
+        {routesToShow.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
       </Routes>

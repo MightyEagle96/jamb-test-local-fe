@@ -3,6 +3,9 @@ import LoginPage from "../pages/admin/LoginPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DashboardPage from "../pages/admin/DashboardPage";
 import { useAuth } from "../hooks/useAuth";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import NotFoundPage from "../pages/NotFoundPage";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -19,11 +22,14 @@ function MainRoute() {
 
   return (
     <BrowserRouter>
+      {user ? <Navbar /> : null}
       <Routes>
         {routesToShow.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

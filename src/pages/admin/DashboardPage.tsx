@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Upload,
   Download,
+  LoaderCircle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import httpService from "../../services/http.service";
@@ -59,8 +60,9 @@ function DashboardCard({
 export default function DashboardPage() {
   // const [registeredComputers, setRegisteredComputers] = useState(0);
   // const [pendingComputers, setPendingComputers] = useState(0);
-  // const [networkTests, setNetworkTests] = useState(0);
-  // const [infractions, setInfractions] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [infractions, setInfractions] = useState(0);
   const [dashboard, setDashboard] = useState({
     registeredComputers: 0,
     pendingComputers: 0,
@@ -76,8 +78,18 @@ export default function DashboardPage() {
     } catch (e) {}
   };
 
+  const getInfractionsCount = async () => {
+    try {
+      const { data } = await httpService.get("/centres/infractionsCount");
+
+      console.log(data);
+      setInfractions(data.data);
+    } catch (error) {}
+  };
   useEffect(() => {
     getData();
+
+    getInfractionsCount();
 
     const onConnect = async () => {
       console.log("connected", socket.id);
@@ -158,13 +170,17 @@ export default function DashboardPage() {
       buttonsStyling: false,
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setUploading(true);
         try {
           const { data } = await httpService.get("/computers/upload");
           toast.success(data);
+
+          getInfractionsCount();
           //console.log(data);
         } catch (e) {
           toastError(e);
         }
+        setUploading(false);
         // await httpService.post("/computers/upload");
       }
     });
@@ -173,6 +189,7 @@ export default function DashboardPage() {
   };
 
   const downloadComputers = async () => {
+    setDownloading(true);
     try {
       const { data } = await httpService.get("/computers/download");
       toast.success(data);
@@ -180,6 +197,7 @@ export default function DashboardPage() {
     } catch (e) {
       toastError(e);
     }
+    setDownloading(false);
   };
   return (
     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -225,7 +243,7 @@ export default function DashboardPage() {
 
           <DashboardCard
             title="Infractions"
-            value={dashboard.infractions}
+            value={infractions}
             color="bg-red-100 text-red-700"
             icon={<ShieldAlert size={30} />}
           />
@@ -277,6 +295,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={uploadComputers}
+                disabled={uploading}
                 className="
           mt-8
           inline-flex
@@ -295,8 +314,17 @@ export default function DashboardPage() {
           hover:shadow-lg
         "
               >
-                <Upload size={18} />
-                Upload Computers
+                {uploading ? (
+                  <>
+                    <LoaderCircle size={18} className="animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload size={18} />
+                    Upload Computers
+                  </>
+                )}
               </button>
             </div>
 
@@ -338,8 +366,19 @@ export default function DashboardPage() {
           hover:text-emerald-700
         "
               >
-                <Download size={18} />
-                Download Computers
+                {/* <Download size={18} />
+                Download Computers */}
+                {downloading ? (
+                  <>
+                    <LoaderCircle size={18} className="animate-spin" />
+                    Downloading...
+                  </>
+                ) : (
+                  <>
+                    <Download size={18} />
+                    Download Computers
+                  </>
+                )}
               </button>
             </div>
 

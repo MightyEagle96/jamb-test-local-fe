@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import NotFoundPage from "../pages/NotFoundPage";
 import LoadingPage from "../pages/LoadingPage";
+import InfractionsPage from "../pages/admin/InfractionsPage";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -17,7 +18,10 @@ function MainRoute() {
     { path: "/admin", element: <LoginPage /> },
   ];
 
-  const privateRoutes = [{ path: "/", element: <DashboardPage /> }];
+  const privateRoutes = [
+    { path: "/", element: <DashboardPage /> },
+    { path: "/infractions", element: <InfractionsPage /> },
+  ];
 
   const routesToShow = user ? privateRoutes : publicRoutes;
 

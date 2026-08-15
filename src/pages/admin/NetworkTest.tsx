@@ -14,35 +14,8 @@ import httpService from "../../services/http.service";
 import { toastError } from "../../components/CustomToast";
 import { toast } from "sonner";
 
-// interface NetworkTest {
-//   createdAt: string;
-//   updatedAt: string;
-
-//   duration: number;
-//   examId: string;
-
-//   connectedComputers: number;
-//   active: boolean;
-
-//   dateCreated: string;
-
-//   maxResponses: number;
-
-//   ended: boolean;
-
-//   totalNetworkLosses: number;
-//   computersWithNetworkLosses: number;
-//   endedComputers: number;
-//   lostInTransport: number;
-
-//   responseThroughput: string;
-
-//   centre: string;
-
-//   status: "pending" | "active" | "ended";
-// }
-
 export interface NetworkTest {
+  _id: string;
   createdAt: string;
   updatedAt: string;
 
@@ -177,13 +150,13 @@ function NetworkTest() {
 
   const deleteNetworkTest = async (examId: string) => {
     try {
-      const { data } = await httpService.delete(`/network-test/${examId}`);
+      await httpService.delete(`/network-test/delete/${examId}`);
 
-      toast.success(data.message);
+      toast.success("Network test deleted.");
 
-      // setNetworkTests((current) =>
-      //   current.filter((test) => test.examId !== examId),
-      // );
+      setNetworkTests((current) =>
+        current.filter((test) => test._id !== examId),
+      );
     } catch (error) {
       console.error("Failed to delete network test:", error);
       toastError(error);
@@ -666,7 +639,7 @@ function NetworkTest() {
                                 disabled={test.status === "uploaded"}
                                 onClick={() => {
                                   setOpenAction(null);
-                                  deleteNetworkTest(test.examId);
+                                  deleteNetworkTest(test._id);
                                 }}
                                 title={
                                   test.status === "uploaded"

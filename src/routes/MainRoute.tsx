@@ -10,6 +10,7 @@ import LoadingPage from "../pages/LoadingPage";
 import InfractionsPage from "../pages/admin/InfractionsPage";
 import ComputerList from "../pages/admin/ComputerList";
 import NetworkTest from "../pages/admin/NetworkTest";
+import NetworkTestPage from "../pages/admin/NetworkTestPage";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -25,6 +26,7 @@ function MainRoute() {
     { path: "/infractions", element: <InfractionsPage /> },
     { path: "/computers", element: <ComputerList /> },
     { path: "/network-tests", element: <NetworkTest /> },
+    { path: "/network-tests/:id", element: <NetworkTestPage /> },
   ];
 
   const routesToShow = user ? privateRoutes : publicRoutes;

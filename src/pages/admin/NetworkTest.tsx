@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Activity,
   Clock3,
@@ -603,35 +604,29 @@ function NetworkTest() {
         "
                             >
                               {/* View */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setOpenAction(null);
-
-                                  console.log("View network test:", test);
-
-                                  // Open your view modal here
-                                }}
+                              <Link
+                                to={`/network-tests/${test._id}`}
+                                onClick={() => setOpenAction(null)}
                                 className="
-            flex
-            w-full
-            items-center
-            gap-3
-            rounded-xl
-            px-3
-            py-2.5
-            text-left
-            text-sm
-            font-medium
-            text-slate-600
-            transition
-            hover:bg-emerald-50
-            hover:text-emerald-700
-          "
+    flex
+    w-full
+    items-center
+    gap-3
+    rounded-xl
+    px-3
+    py-2.5
+    text-left
+    text-sm
+    font-medium
+    text-slate-600
+    transition
+    hover:bg-emerald-50
+    hover:text-emerald-700
+  "
                               >
                                 <Eye size={17} />
                                 View
-                              </button>
+                              </Link>
 
                               {/* Delete */}
                               <button

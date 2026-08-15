@@ -8,6 +8,8 @@ import Footer from "../components/Footer";
 import NotFoundPage from "../pages/NotFoundPage";
 import LoadingPage from "../pages/LoadingPage";
 import InfractionsPage from "../pages/admin/InfractionsPage";
+import ComputerList from "../pages/admin/ComputerList";
+import NetworkTest from "../pages/admin/NetworkTest";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -21,6 +23,8 @@ function MainRoute() {
   const privateRoutes = [
     { path: "/", element: <DashboardPage /> },
     { path: "/infractions", element: <InfractionsPage /> },
+    { path: "/computers", element: <ComputerList /> },
+    { path: "/network-tests", element: <NetworkTest /> },
   ];
 
   const routesToShow = user ? privateRoutes : publicRoutes;

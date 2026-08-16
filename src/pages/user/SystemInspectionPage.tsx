@@ -11,6 +11,8 @@ import InspectionCardsLoading from "../../components/InspectionCardsLoading";
 import Swal from "sweetalert2";
 import httpService from "../../services/http.service";
 import { toastError } from "../../components/CustomToast";
+import { useNavigate } from "react-router-dom";
+import { socket } from "../../services/socket.service";
 
 export default function SystemInspectionPage() {
   const [loading, setLoading] = useState(true);
@@ -18,6 +20,8 @@ export default function SystemInspectionPage() {
   const [system, setSystem] = useState<SystemInformation["data"] | null>(null);
 
   const [error, setError] = useState(false);
+
+  const navigate = useNavigate();
 
   const loadSystem = async () => {
     try {
@@ -45,7 +49,7 @@ export default function SystemInspectionPage() {
   }, []);
 
   const onRegister = async () => {
-    const result = await Swal.fire({
+    Swal.fire({
       title: "Register Computer?",
       html: `
       <div style="text-align:left; line-height:1.7; font-size:15px;">
@@ -197,6 +201,48 @@ export default function SystemInspectionPage() {
     // TODO:
     // Call the registration endpoint here.
   };
+
+  const isQualifiedToTakeTest = async () => {
+    try {
+      const { data } = await httpService.get("/computers/one", {
+        params: {
+          serialNumber: system?.identity.serialNumber,
+          macAddress: system?.network.macAddress,
+        },
+      });
+
+      if (data.status === true) {
+        navigate("/network-test");
+      } else {
+        navigate("/network-test-blocked");
+      }
+    } catch (error) {
+      toastError(error);
+    }
+  };
+
+  useEffect(() => {
+    const onConnect = () => {
+      console.log("connected", socket.id);
+    };
+
+    const disconnect = () => {
+      console.log("disconnected", socket.id);
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", disconnect);
+
+    socket.on("test-status", (data) => {
+      if (!system) return;
+      isQualifiedToTakeTest();
+    });
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", disconnect);
+    };
+  }, [system]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-emerald-50">
       <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center p-6">

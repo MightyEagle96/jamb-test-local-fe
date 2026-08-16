@@ -11,6 +11,8 @@ import InfractionsPage from "../pages/admin/InfractionsPage";
 import ComputerList from "../pages/admin/ComputerList";
 import NetworkTest from "../pages/admin/NetworkTest";
 import NetworkTestPage from "../pages/admin/NetworkTestPage";
+import NetworkTestBlocked from "../pages/user/FailedTest";
+import NetworkTestWindow from "../pages/user/NetworkTestWindow";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -19,6 +21,8 @@ function MainRoute() {
   const publicRoutes = [
     { path: "/", element: <HomePage /> },
     { path: "/admin", element: <LoginPage /> },
+    { path: "/network-test-blocked", element: <NetworkTestBlocked /> },
+    { path: "/network-test", element: <NetworkTestWindow /> },
   ];
 
   const privateRoutes = [

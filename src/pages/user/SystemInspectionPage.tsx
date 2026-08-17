@@ -208,11 +208,12 @@ export default function SystemInspectionPage() {
         params: {
           serialNumber: system?.identity.serialNumber,
           macAddress: system?.network.macAddress,
+          networkTest: testData._id,
         },
       });
 
       if (data.status === true) {
-        navigate(`/network-test?id=${testData._id}`);
+        navigate(`/network-test?id=${testData._id}&computer=${data.computer}`);
       } else {
         navigate("/network-test-blocked");
       }

@@ -202,7 +202,7 @@ export default function SystemInspectionPage() {
     // Call the registration endpoint here.
   };
 
-  const isQualifiedToTakeTest = async () => {
+  const isQualifiedToTakeTest = async (testData: any) => {
     try {
       const { data } = await httpService.get("/computers/one", {
         params: {
@@ -212,7 +212,7 @@ export default function SystemInspectionPage() {
       });
 
       if (data.status === true) {
-        navigate("/network-test");
+        navigate(`/network-test?id=${testData._id}`);
       } else {
         navigate("/network-test-blocked");
       }
@@ -235,7 +235,7 @@ export default function SystemInspectionPage() {
 
     socket.on("test-status", (data) => {
       if (!system) return;
-      isQualifiedToTakeTest();
+      isQualifiedToTakeTest(data);
     });
     return () => {
       socket.off("connect", onConnect);

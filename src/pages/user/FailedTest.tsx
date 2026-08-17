@@ -1,4 +1,11 @@
-import { AlertTriangle, Database, ShieldAlert, WifiOff } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  AlertTriangle,
+  Database,
+  ShieldAlert,
+  WifiOff,
+} from "lucide-react";
 
 function NetworkTestBlocked() {
   return (
@@ -138,17 +145,48 @@ function NetworkTestBlocked() {
           {/* Instruction */}
           <div className="border-t border-slate-100 bg-slate-50 px-6 py-6 sm:px-8">
             <p className="text-center text-sm leading-6 text-slate-500">
-              Please contact the centre administrator or JAMB technical support
-              for assistance. Do not attempt to modify or bypass the system
-              registration.
+              Please contact JAMB technical support for assistance. Do not
+              attempt to modify or bypass the system registration.
             </p>
           </div>
         </div>
 
+        <div className="mt-6 flex justify-center">
+          <Link
+            to="/"
+            className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-xl
+      border
+      border-slate-200
+      bg-white
+      px-5
+      py-2.5
+      text-sm
+      font-semibold
+      text-slate-600
+      shadow-sm
+      transition-all
+      duration-200
+      hover:-translate-y-0.5
+      hover:border-slate-300
+      hover:bg-slate-50
+      hover:text-slate-800
+      hover:shadow-md
+      active:scale-[0.98]
+    "
+          >
+            <ArrowLeft size={17} />
+            Back to Home
+          </Link>
+        </div>
+
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-slate-400">
+        {/* <p className="mt-6 text-center text-xs text-slate-400">
           JAMB Test Network Verification
-        </p>
+        </p> */}
       </div>
     </div>
   );

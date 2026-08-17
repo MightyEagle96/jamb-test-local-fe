@@ -70,7 +70,7 @@ function NetworkTestPage() {
       setLoading(true);
       setError("");
 
-      const response = await httpService.get(`/network-test/${id}`);
+      const response = await httpService.get(`/network-test/view/${id}`);
 
       setTest(response.data);
     } catch (error: any) {
@@ -158,7 +158,7 @@ function NetworkTestPage() {
     try {
       setActivating(true);
 
-      await httpService.patch(`/network-test/${test._id}`);
+      await httpService.patch(`/network-test/activate/${test._id}`);
 
       toast.success("Network test activated.");
 

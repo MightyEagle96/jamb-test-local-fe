@@ -1,15 +1,40 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { socket } from "../../services/socket.service";
+import httpService from "../../services/http.service";
+import { toastError } from "../../components/CustomToast";
 function NetworkTestWindow() {
   const [params] = useSearchParams();
 
   const testId = params.get("id");
+  const computer = params.get("computer");
 
   console.log(testId);
   const [connected, setConnected] = useState(false);
 
   const navigate = useNavigate();
+
+  const getNetworkTest = async () => {
+    try {
+      const { data } = await httpService.get(
+        "/network-test-responses/findone",
+        {
+          params: {
+            networkTest: testId,
+            computer,
+          },
+        },
+      );
+
+      console.log(data);
+    } catch (error) {
+      toastError(error);
+    }
+  };
+
+  useEffect(() => {
+    getNetworkTest();
+  }, []);
 
   useEffect(() => {
     const onConnect = () => {

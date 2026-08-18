@@ -118,15 +118,6 @@ export default function SystemInspectionPage() {
 
       allowEscapeKey: false,
 
-      // customClass: {
-      //   popup: "rounded-3xl",
-      //   title: "text-2xl font-bold text-slate-800",
-      //   confirmButton:
-      //     "bg-gradient-to-r from-emerald-700 to-green-600 text-white px-6 py-3 rounded-xl font-semibold",
-      //   cancelButton:
-      //     "bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-semibold",
-      // },
-
       customClass: {
         popup: "rounded-3xl",
 

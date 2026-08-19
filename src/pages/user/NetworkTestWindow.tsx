@@ -86,7 +86,9 @@ function NetworkTestPage({
   const [responseCount, setResponseCount] = useState(0);
 
   const [lastResponseAt, setLastResponseAt] = useState<Date | null>(null);
-  const lastResponseMinute = useRef<number | null>(null);
+
+  const childTimeLeftRef = useRef(childTimeLeft);
+
   const testId = params.get("id");
   const navigate = useNavigate();
 
@@ -99,6 +101,10 @@ function NetworkTestPage({
   useEffect(() => {
     setChildTimeLeft(initialTimeLeft);
   }, [initialTimeLeft]);
+
+  useEffect(() => {
+    childTimeLeftRef.current = childTimeLeft;
+  }, [childTimeLeft]);
 
   /*
    * ---------------------------------------------------------
@@ -191,9 +197,15 @@ function NetworkTestPage({
     }
 
     const interval = window.setInterval(() => {
-      console.log("🔥 Sending network test response");
+      const currentTimeLeft = childTimeLeftRef.current;
 
-      saveResponse(childTimeLeft);
+      console.log(
+        "🔥 Sending network test response",
+        "timeLeft:",
+        currentTimeLeft,
+      );
+
+      saveResponse(currentTimeLeft);
     }, 60_000);
 
     return () => {
@@ -281,57 +293,21 @@ function NetworkTestPage({
 
                     <div className="hidden">
                       <CountdownCircleTimer
-                        isPlaying={connectedStatus && initialTimeLeft > 0}
+                        isPlaying={connectedStatus || initialTimeLeft > 0}
                         duration={initialTimeLeft / 1000}
                         colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
                         colorsTime={[7, 5, 2, 0]}
                         onComplete={() => {
+                          // Test has ended
                           navigate("/concluded?id=" + testId);
                         }}
-                        onUpdate={(remainingSeconds) => {
-                          const milliseconds = remainingSeconds * 1000;
-
-                          setChildTimeLeft(milliseconds);
-
-                          /*
-                           * Determine which minute we're currently in.
-                           *
-                           * Example:
-                           *
-                           * 299s → minute 4
-                           * 240s → minute 4
-                           * 239s → minute 3
-                           * 180s → minute 3
-                           */
-                          const currentMinute = Math.ceil(
-                            remainingSeconds / 60,
-                          );
-
-                          /*
-                           * Send exactly one response whenever we
-                           * cross into a new minute.
-                           */
-                          if (
-                            currentMinute !== lastResponseMinute.current &&
-                            currentMinute <
-                              Math.ceil(initialTimeLeft / 1000 / 60)
-                          ) {
-                            lastResponseMinute.current = currentMinute;
-
-                            console.log(
-                              "🔥 Sending response for minute:",
-                              currentMinute,
-                              "timeLeft:",
-                              milliseconds,
-                            );
-
-                            saveResponse(milliseconds);
-                          }
-
-                          console.log("Timer:", remainingSeconds);
+                        onUpdate={(e) => {
+                          setChildTimeLeft(e * 1000);
                         }}
                       >
-                        {({ remainingTime }) => remainingTime}
+                        {({ remainingTime }) => {
+                          return remainingTime;
+                        }}
                       </CountdownCircleTimer>
                     </div>
                   </div>

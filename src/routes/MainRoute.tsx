@@ -13,6 +13,7 @@ import NetworkTest from "../pages/admin/NetworkTest";
 import NetworkTestPage from "../pages/admin/NetworkTestPage";
 import NetworkTestBlocked from "../pages/user/FailedTest";
 import NetworkTestWindow from "../pages/user/NetworkTestWindow";
+import NetworkTestConcludedPage from "../pages/user/TestCompleted";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -23,6 +24,7 @@ function MainRoute() {
     { path: "/admin", element: <LoginPage /> },
     { path: "/network-test-blocked", element: <NetworkTestBlocked /> },
     { path: "/network-test", element: <NetworkTestWindow /> },
+    { path: "/concluded", element: <NetworkTestConcludedPage /> },
   ];
 
   const privateRoutes = [

@@ -69,7 +69,7 @@ interface NetworkTestPageProps {
   connectedStatus: boolean;
   ipAddress: string;
   question: Question;
-  saveResponse: () => void;
+  saveResponse: (timeLeft: number) => void;
 }
 
 function NetworkTestPage({
@@ -80,11 +80,14 @@ function NetworkTestPage({
   question,
   saveResponse,
 }: NetworkTestPageProps) {
-  const [timeLeft, setTimeLeft] = useState(initialTimeLeft);
+  const [params] = useSearchParams();
+  const [childTimeLeft, setChildTimeLeft] = useState(0);
 
   const [responseCount, setResponseCount] = useState(0);
 
   const [lastResponseAt, setLastResponseAt] = useState<Date | null>(null);
+  const testId = params.get("id");
+  const navigate = useNavigate();
 
   /*
    * ---------------------------------------------------------
@@ -93,19 +96,8 @@ function NetworkTestPage({
    */
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      setTimeLeft((previous) => {
-        if (previous <= 1000) {
-          window.clearInterval(interval);
-          return 0;
-        }
-
-        return previous - 1000;
-      });
-    }, 1000);
-
-    return () => window.clearInterval(interval);
-  }, []);
+    setChildTimeLeft(initialTimeLeft);
+  }, [initialTimeLeft]);
 
   /*
    * ---------------------------------------------------------
@@ -114,7 +106,7 @@ function NetworkTestPage({
    */
 
   const formattedTime = useMemo(() => {
-    const totalSeconds = Math.floor(timeLeft / 1000);
+    const totalSeconds = Math.floor(childTimeLeft / 1000);
 
     const hours = Math.floor(totalSeconds / 3600);
 
@@ -127,7 +119,7 @@ function NetworkTestPage({
       minutes.toString().padStart(2, "0"),
       seconds.toString().padStart(2, "0"),
     ].join(":");
-  }, [timeLeft]);
+  }, [childTimeLeft]);
 
   /*
    * ---------------------------------------------------------
@@ -216,7 +208,7 @@ function NetworkTestPage({
     const interval = window.setInterval(() => {
       console.log("🔥 Sending network test response");
 
-      saveResponse();
+      saveResponse(childTimeLeft);
     }, 60_000);
 
     return () => {
@@ -304,12 +296,20 @@ function NetworkTestPage({
 
                     <div className="hidden">
                       <CountdownCircleTimer
-                        isPlaying={connectedStatus}
+                        isPlaying={connectedStatus || initialTimeLeft > 0}
                         duration={initialTimeLeft / 1000}
                         colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
                         colorsTime={[7, 5, 2, 0]}
                         onComplete={() => {
                           // Test has ended
+                          navigate("/concluded?id=" + testId);
+                        }}
+                        onUpdate={(e) => {
+                          setChildTimeLeft(e * 1000);
+                          if (e % 60 === 0) {
+                            saveResponse(e * 1000);
+                          }
+                          console.log(e);
                         }}
                       >
                         {({ remainingTime }) => {
@@ -564,11 +564,11 @@ function NetworkTestWindow() {
       socket.off("reconnect", onReconnect);
     };
   }, [testId, navigate]);
-  const saveResponse = async () => {
+  const saveResponse = async (timeRemaining: number) => {
     try {
       const { data } = await httpService.post(
         "/network-test-responses/saveresponses",
-        {},
+        { timeLeft: timeRemaining, computer, networkTest: testId },
       );
       console.log(data);
       setQuestion(data);

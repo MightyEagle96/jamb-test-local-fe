@@ -136,6 +136,12 @@ function NetworkTestPage() {
 
     getAllData();
 
+    const interval = setInterval(() => {
+      loadResponses();
+    }, 60_000);
+
+    return () => clearInterval(interval);
+
     // fetchNetworkTest();
   }, [id]);
 
@@ -528,7 +534,7 @@ function NetworkTestPage() {
           <Metric
             icon={<Monitor size={20} />}
             label="Systems Connected"
-            value={`${test.connectedComputers.toLocaleString()}/${user?.centreCapacity}`}
+            value={`${networkTestResponses.length.toLocaleString()}/${user?.centreCapacity}`}
           />
 
           <Metric

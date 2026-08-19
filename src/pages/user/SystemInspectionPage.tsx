@@ -213,6 +213,18 @@ export default function SystemInspectionPage() {
     }
   };
 
+  const checkForActiveTest = async () => {
+    try {
+      await httpService.get("/network-test/active_by_computer");
+    } catch (error) {
+      toastError(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!system) return;
+    checkForActiveTest();
+  }, [system]);
   useEffect(() => {
     const onConnect = () => {
       console.log("connected", socket.id);

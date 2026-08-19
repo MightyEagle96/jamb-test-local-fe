@@ -1,5 +1,7 @@
 import { CheckCircle2, Clock3, Network, ShieldCheck } from "lucide-react";
-
+import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { socket } from "../../services/socket.service";
 interface NetworkTestConcludedPageProps {
   responses?: number;
   duration?: number;
@@ -9,6 +11,57 @@ function NetworkTestConcludedPage({
   responses,
   duration,
 }: NetworkTestConcludedPageProps) {
+  const [params] = useSearchParams();
+
+  const testId = params.get("id");
+  const computer = params.get("computer");
+
+  const [connected, setConnected] = useState(false);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const onConnect = () => {
+      setConnected(true);
+    };
+
+    const onDisconnect = () => {
+      setConnected(false);
+    };
+
+    const onReconnect = () => {
+      setConnected(true);
+    };
+
+    const onEndTest = (data: string) => {
+      console.log("🏁 END TEST EVENT:", data);
+
+      if (data === testId) {
+        navigate("/");
+      }
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("reconnect", onReconnect);
+    socket.on("end-test", onEndTest);
+
+    // ⭐ IMPORTANT
+    // The socket may already have connected before this component mounted.
+    if (socket.connected) {
+      console.log("🟢 SOCKET WAS ALREADY CONNECTED");
+
+      setConnected(true);
+    }
+
+    return () => {
+      console.log("🧹 NetworkTestPage socket effect unmounted");
+
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("end-test", onEndTest);
+      socket.off("reconnect", onReconnect);
+    };
+  }, [testId, navigate]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8">
       <div className="w-full max-w-2xl">

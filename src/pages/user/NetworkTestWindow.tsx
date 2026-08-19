@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import QuestionDisplay from "./QuestionDisplay";
+import NetworkDisconnectedPage from "./NetworkDisconnected";
 
 interface Question {
   id: number;
@@ -525,11 +526,12 @@ function NetworkTestWindow() {
       setConnected(true);
     };
 
-    const onDisconnect = (reason: string) => {
-      console.log("🔴 SOCKET DISCONNECT EVENT");
-      console.log("Reason:", reason);
-
+    const onDisconnect = () => {
       setConnected(false);
+    };
+
+    const onReconnect = () => {
+      setConnected(true);
     };
 
     const onEndTest = (data: string) => {
@@ -542,6 +544,7 @@ function NetworkTestWindow() {
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+    socket.on("reconnect", onReconnect);
     socket.on("end-test", onEndTest);
 
     // ⭐ IMPORTANT
@@ -558,6 +561,7 @@ function NetworkTestWindow() {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("end-test", onEndTest);
+      socket.off("reconnect", onReconnect);
     };
   }, [testId, navigate]);
   const saveResponse = async () => {
@@ -570,6 +574,8 @@ function NetworkTestWindow() {
       setQuestion(data);
     } catch (error) {}
   };
+
+  if (!connected) return <NetworkDisconnectedPage />;
 
   return (
     <div>

@@ -15,13 +15,6 @@ import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { toastError } from "../../components/CustomToast";
 
-type DashboardProps = {
-  registeredComputers: number;
-  pendingComputers: number;
-  networkTests: number;
-  infractions: number;
-};
-
 function DashboardCard({
   title,
   value,
@@ -115,59 +108,77 @@ export default function DashboardPage() {
   const uploadComputers = async () => {
     Swal.fire({
       title: "Upload Centre Computers?",
+
+      width: "720px",
+
       html: `
-      <div style="text-align:left;line-height:1.8">
-        <p>
-          You are about to upload the computers currently available in your
-          CBT centre to the JAMB central database.
+    <div style="text-align:left;line-height:1.8">
+      <p>
+        You are about to upload the computers currently available in your
+        CBT centre to the JAMB central database.
+      </p>
+
+      <div style="
+        margin-top:18px;
+        padding:18px;
+        border-radius:16px;
+        background:#fef2f2;
+        border:1px solid #fecaca;
+        color:#991b1b;
+      ">
+        <strong>Declaration</strong>
+
+        <p style="margin-top:10px">
+          I confirm that every computer being uploaded is exclusively
+          assigned to this CBT centre and has not been registered or shared
+          with any other CBT centre.
         </p>
 
-        <div style="
-          margin-top:18px;
-          padding:16px;
-          border-radius:16px;
-          background:#fef2f2;
-          border:1px solid #fecaca;
-          color:#991b1b;
-        ">
-          <strong>Declaration</strong>
-
-          <p style="margin-top:10px">
-            I confirm that every computer being uploaded is exclusively
-            assigned to this CBT centre and has not been registered or shared
-            with any other CBT centre.
-          </p>
-
-          <p style="margin-top:10px">
-            I understand that registering computers belonging to another
-            accredited CBT centre constitutes an examination infraction and
-            may result in sanctions, withdrawal of accreditation and
-            prosecution by the Joint Admissions and Matriculation Board.
-          </p>
-        </div>
-
-        <p style="margin-top:18px">
-          Do you wish to continue?
+        <p style="margin-top:10px">
+          I understand that registering computers belonging to another
+          accredited CBT centre constitutes an examination infraction and
+          may result in sanctions, withdrawal of accreditation and
+          prosecution by the Joint Admissions and Matriculation Board.
         </p>
       </div>
-    `,
+
+      <p style="margin-top:18px">
+        Do you wish to continue?
+      </p>
+    </div>
+  `,
+
       icon: "warning",
+
       showCancelButton: true,
+
       confirmButtonText: "Yes, Upload Computers",
+
       cancelButtonText: "Cancel",
+
       reverseButtons: true,
 
       customClass: {
         popup: "rounded-[28px]",
+
         title: "text-slate-800 font-black text-3xl",
+
         htmlContainer: "text-slate-600 text-base",
+
         confirmButton:
           "rounded-xl bg-gradient-to-r from-emerald-700 to-green-600 px-6 py-3 font-semibold text-white shadow-lg hover:shadow-xl",
+
         cancelButton:
           "rounded-xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 hover:bg-slate-100",
+
         actions: "gap-4 mt-8",
       },
+
       buttonsStyling: false,
+
+      allowOutsideClick: false,
+
+      allowEscapeKey: false,
     }).then(async (result) => {
       if (result.isConfirmed) {
         setUploading(true);

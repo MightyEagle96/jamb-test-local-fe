@@ -15,8 +15,27 @@ import { useAppUser } from "../../contexts/AppUserContext";
 import Swal from "sweetalert2";
 import { toastError } from "../../components/CustomToast";
 import { toast } from "sonner";
+import NetworkTestResponsesTable from "./NetworkTestResponseTable";
 
 type NetworkTestStatus = "pending" | "active" | "ended" | "uploaded";
+
+interface NetworkTestResponse {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  networkTest: string;
+  computer: string;
+  loggedInAt: string;
+  ipAddress: string;
+  responses: number;
+  timeLeft: number;
+  status: string;
+  networkLosses: number;
+}
+
+interface Props {
+  responses: NetworkTestResponse[];
+}
 
 interface NetworkTest {
   _id: string;
@@ -59,15 +78,39 @@ function NetworkTestPage() {
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState(false);
   const [error, setError] = useState("");
+  const [networkTestResponses, setNetworkTestResponses] = useState<
+    NetworkTestResponse[]
+  >([]);
 
   const { user } = useAppUser();
   /**
    * Fetch the network test.
    */
 
+  const getAllData = async () => {
+    setLoading(true);
+    await Promise.all([fetchNetworkTest(), loadResponses()]);
+    setLoading(false);
+  };
+  const loadResponses = async () => {
+    try {
+      const response = await httpService.get(
+        "/network-test-responses/findall",
+        {
+          params: {
+            networkTest: id,
+          },
+        },
+      );
+
+      setNetworkTestResponses(response.data.data);
+      console.log(response.data);
+    } catch (error) {
+      toastError(error);
+    }
+  };
   const fetchNetworkTest = async () => {
     try {
-      setLoading(true);
       setError("");
 
       const response = await httpService.get(`/network-test/view/${id}`);
@@ -82,8 +125,6 @@ function NetworkTestPage() {
       setError(
         error.response?.data?.message || "Unable to load this network test.",
       );
-    } finally {
-      setLoading(false);
     }
   };
   useEffect(() => {
@@ -93,7 +134,9 @@ function NetworkTestPage() {
       return;
     }
 
-    fetchNetworkTest();
+    getAllData();
+
+    // fetchNetworkTest();
   }, [id]);
 
   /**
@@ -554,29 +597,144 @@ function NetworkTestPage() {
         </div>
 
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="space-y-1">
-            <TimelineItem label="Test Created" date={test.dateCreated} active />
+          <div className="flex items-start justify-between">
+            {/* Created */}
+            <div className="flex flex-1 flex-col items-center text-center">
+              <div className="flex w-full items-center">
+                <div className="h-3 w-3 shrink-0 rounded-full bg-emerald-500 ring-4 ring-emerald-50" />
 
-            {test.timeActivated && (
-              <TimelineItem
-                label="Test Activated"
-                date={test.timeActivated}
-                active
-              />
-            )}
+                <div className="h-0.5 flex-1 bg-emerald-200" />
+              </div>
 
-            {test.timeEnded && (
-              <TimelineItem label="Test Ended" date={test.timeEnded} active />
-            )}
+              <div className="mt-4">
+                <p className="text-sm font-semibold text-slate-700">
+                  Test Created
+                </p>
 
-            {test.timeUploaded && (
-              <TimelineItem
-                label="Results Uploaded"
-                date={test.timeUploaded}
-                active
-              />
-            )}
+                <p className="mt-1 text-xs text-slate-400">
+                  {test.dateCreated
+                    ? new Date(test.dateCreated).toLocaleString()
+                    : "—"}
+                </p>
+              </div>
+            </div>
+
+            {/* Activated */}
+            <div className="flex flex-1 flex-col items-center text-center">
+              <div className="flex w-full items-center">
+                <div className="h-0.5 flex-1 bg-emerald-200" />
+
+                <div
+                  className={`h-3 w-3 shrink-0 rounded-full ring-4 ${
+                    test.timeActivated
+                      ? "bg-emerald-500 ring-emerald-50"
+                      : "bg-slate-200 ring-slate-50"
+                  }`}
+                />
+
+                <div
+                  className={`h-0.5 flex-1 ${
+                    test.timeActivated ? "bg-emerald-200" : "bg-slate-100"
+                  }`}
+                />
+              </div>
+
+              <div className="mt-4">
+                <p
+                  className={`text-sm font-semibold ${
+                    test.timeActivated ? "text-slate-700" : "text-slate-400"
+                  }`}
+                >
+                  Test Activated
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  {test.timeActivated
+                    ? new Date(test.timeActivated).toLocaleString()
+                    : "Pending"}
+                </p>
+              </div>
+            </div>
+
+            {/* Ended */}
+            <div className="flex flex-1 flex-col items-center text-center">
+              <div className="flex w-full items-center">
+                <div
+                  className={`h-0.5 flex-1 ${
+                    test.timeEnded ? "bg-emerald-200" : "bg-slate-100"
+                  }`}
+                />
+
+                <div
+                  className={`h-3 w-3 shrink-0 rounded-full ring-4 ${
+                    test.timeEnded
+                      ? "bg-emerald-500 ring-emerald-50"
+                      : "bg-slate-200 ring-slate-50"
+                  }`}
+                />
+
+                <div
+                  className={`h-0.5 flex-1 ${
+                    test.timeEnded ? "bg-emerald-200" : "bg-slate-100"
+                  }`}
+                />
+              </div>
+
+              <div className="mt-4">
+                <p
+                  className={`text-sm font-semibold ${
+                    test.timeEnded ? "text-slate-700" : "text-slate-400"
+                  }`}
+                >
+                  Test Ended
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  {test.timeEnded
+                    ? new Date(test.timeEnded).toLocaleString()
+                    : "Pending"}
+                </p>
+              </div>
+            </div>
+
+            {/* Uploaded */}
+            <div className="flex flex-1 flex-col items-center text-center">
+              <div className="flex w-full items-center">
+                <div
+                  className={`h-0.5 flex-1 ${
+                    test.timeUploaded ? "bg-emerald-200" : "bg-slate-100"
+                  }`}
+                />
+
+                <div
+                  className={`h-3 w-3 shrink-0 rounded-full ring-4 ${
+                    test.timeUploaded
+                      ? "bg-emerald-500 ring-emerald-50"
+                      : "bg-slate-200 ring-slate-50"
+                  }`}
+                />
+              </div>
+
+              <div className="mt-4">
+                <p
+                  className={`text-sm font-semibold ${
+                    test.timeUploaded ? "text-slate-700" : "text-slate-400"
+                  }`}
+                >
+                  Results Uploaded
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  {test.timeUploaded
+                    ? new Date(test.timeUploaded).toLocaleString()
+                    : "Pending"}
+                </p>
+              </div>
+            </div>
           </div>
+        </div>
+        <div className="my-5">
+          <NetworkTestResponsesTable responses={networkTestResponses} />
         </div>
       </section>
     </main>

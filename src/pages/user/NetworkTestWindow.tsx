@@ -15,6 +15,14 @@ import {
   Server,
   ShieldCheck,
 } from "lucide-react";
+import QuestionDisplay from "./QuestionDisplay";
+
+interface Question {
+  id: number;
+  question: string;
+  answer: string;
+  options: string[];
+}
 
 interface SystemInformation {
   _id: string;
@@ -54,16 +62,13 @@ interface SystemInformation {
   };
 }
 
-interface NetworkResponse {
-  question: string;
-  answer: string;
-}
-
 interface NetworkTestPageProps {
   system: SystemInformation;
   initialTimeLeft?: number;
   connectedStatus: boolean;
   ipAddress: string;
+  question: Question;
+  saveResponse: () => void;
 }
 
 function NetworkTestPage({
@@ -71,11 +76,10 @@ function NetworkTestPage({
   initialTimeLeft = 60 * 60 * 1000,
   connectedStatus,
   ipAddress,
+  question,
+  saveResponse,
 }: NetworkTestPageProps) {
   const [timeLeft, setTimeLeft] = useState(initialTimeLeft);
-
-  const [networkResponse, setNetworkResponse] =
-    useState<NetworkResponse | null>(null);
 
   const [responseCount, setResponseCount] = useState(0);
 
@@ -98,55 +102,6 @@ function NetworkTestPage({
         return previous - 1000;
       });
     }, 1000);
-
-    return () => window.clearInterval(interval);
-  }, []);
-
-  /*
-   * ---------------------------------------------------------
-   * API polling
-   *
-   * Every minute we will eventually call the backend here.
-   * For now, this is the placeholder.
-   * ---------------------------------------------------------
-   */
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      /*
-       * TODO:
-       *
-       * Call backend:
-       *
-       * GET /network-test-responses/...
-       *
-       * or whatever endpoint we settle on.
-       *
-       * Expected response:
-       *
-       * {
-       *   question: "...",
-       *   answer: "..."
-       * }
-       */
-
-      console.log("Sending network test response update...");
-
-      setResponseCount((previous) => previous + 1);
-
-      setLastResponseAt(new Date());
-
-      /*
-       * Temporary demonstration data.
-       *
-       * Remove this when the backend endpoint is connected.
-       */
-      setNetworkResponse({
-        question: "What is the primary purpose of conducting a network test?",
-        answer:
-          "To evaluate the reliability, connectivity and response performance of the systems participating in the examination environment.",
-      });
-    }, 60_000);
 
     return () => window.clearInterval(interval);
   }, []);
@@ -232,6 +187,42 @@ function NetworkTestPage({
     },
   ];
 
+  // useEffect(() => {
+  //   if (!connectedStatus) {
+  //     return;
+  //   }
+
+  //   const interval = window.setInterval(() => {
+  //     console.log("🔥 Sending network test response");
+
+  //     // saveResponse();
+  //   }, 6_000);
+
+  //   return () => {
+  //     window.clearInterval(interval);
+  //   };
+  // }, [connectedStatus, timeLeft]);
+
+  useEffect(() => {
+    console.log("🔥 Network heartbeat effect started");
+    console.log("connectedStatus:", connectedStatus);
+
+    if (!connectedStatus) {
+      console.log("❌ Network test is not connected");
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      console.log("🔥 Sending network test response");
+
+      saveResponse();
+    }, 60_000);
+
+    return () => {
+      console.log("🧹 Cleaning network heartbeat");
+      window.clearInterval(interval);
+    };
+  }, [connectedStatus]);
   return (
     <div className="h-screen overflow-hidden bg-slate-100 text-slate-800">
       <div className="flex h-full flex-col">
@@ -316,18 +307,13 @@ function NetworkTestPage({
                         duration={initialTimeLeft / 1000}
                         colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
                         colorsTime={[7, 5, 2, 0]}
-                        onUpdate={(e) => {
-                          if (e % 60 === 0) {
-                            console.log("Response sent");
-                            //if (timeLeft !== 0) sendResponses();
-                          }
-                          setTimeLeft(e * 1000);
-                        }}
                         onComplete={() => {
-                          //submitExam(submissionTypes.timeup);
+                          // Test has ended
                         }}
                       >
-                        {({ remainingTime }) => remainingTime}
+                        {({ remainingTime }) => {
+                          return remainingTime;
+                        }}
                       </CountdownCircleTimer>
                     </div>
                   </div>
@@ -374,32 +360,10 @@ function NetworkTestPage({
                 </div>
 
                 {/* Question */}
+                {/* Question */}
                 <div className="flex min-h-0 flex-1 flex-col overflow-auto p-7">
-                  {networkResponse ? (
-                    <>
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-600">
-                          Question
-                        </p>
-
-                        <h2 className="mt-4 max-w-4xl text-lg font-semibold leading-8 text-slate-800">
-                          {networkResponse.question}
-                        </h2>
-                      </div>
-
-                      {/* Answer */}
-                      <div className="mt-8">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                          Server Response
-                        </p>
-
-                        <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                          <p className="text-sm leading-7 text-slate-600">
-                            {networkResponse.answer}
-                          </p>
-                        </div>
-                      </div>
-                    </>
+                  {question ? (
+                    <QuestionDisplay question={question} />
                   ) : (
                     <div className="flex flex-1 items-center justify-center">
                       <div className="text-center">
@@ -524,10 +488,10 @@ function NetworkTestWindow() {
   const computer = params.get("computer");
 
   const [system, setSystem] = useState<SystemInformation | null>(null);
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(socket.connected);
   const [ipAddress, setIpAddress] = useState("");
   const [timeLeft, setTimeLeft] = useState(0);
-
+  const [question, setQuestion] = useState<Question | null>(null);
   const navigate = useNavigate();
 
   const getNetworkTest = async () => {
@@ -542,9 +506,9 @@ function NetworkTestWindow() {
         },
       );
 
-      console.log(data);
       setTimeLeft(data.data.timeLeft);
       setSystem(data.data.computerDetails);
+      setQuestion(data.question);
 
       setIpAddress(data.data.ipAddress);
     } catch (error) {
@@ -559,37 +523,64 @@ function NetworkTestWindow() {
   useEffect(() => {
     const onConnect = () => {
       setConnected(true);
-      console.log("connected", socket.id);
     };
 
-    const disconnect = () => {
+    const onDisconnect = (reason: string) => {
+      console.log("🔴 SOCKET DISCONNECT EVENT");
+      console.log("Reason:", reason);
+
       setConnected(false);
-      console.log("disconnected", socket.id);
     };
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", disconnect);
+    const onEndTest = (data: string) => {
+      console.log("🏁 END TEST EVENT:", data);
 
-    socket.on("end-test", (data) => {
       if (data === testId) {
         navigate("/");
       }
-    });
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("end-test", onEndTest);
+
+    // ⭐ IMPORTANT
+    // The socket may already have connected before this component mounted.
+    if (socket.connected) {
+      console.log("🟢 SOCKET WAS ALREADY CONNECTED");
+
+      setConnected(true);
+    }
 
     return () => {
+      console.log("🧹 NetworkTestPage socket effect unmounted");
+
       socket.off("connect", onConnect);
-      socket.off("disconnect", disconnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("end-test", onEndTest);
     };
-  }, [testId]);
+  }, [testId, navigate]);
+  const saveResponse = async () => {
+    try {
+      const { data } = await httpService.post(
+        "/network-test-responses/saveresponses",
+        {},
+      );
+      console.log(data);
+      setQuestion(data);
+    } catch (error) {}
+  };
 
   return (
     <div>
-      {system && (
+      {system && connected && (
         <NetworkTestPage
           system={system as SystemInformation}
           initialTimeLeft={timeLeft}
           connectedStatus={connected}
           ipAddress={ipAddress}
+          question={question as Question}
+          saveResponse={saveResponse}
         />
       )}
     </div>

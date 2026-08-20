@@ -234,16 +234,19 @@ export default function SystemInspectionPage() {
       console.log("disconnected", socket.id);
     };
 
+    const testStatus = (data: any) => {
+      if (!system) return;
+      isQualifiedToTakeTest(data);
+    };
+
     socket.on("connect", onConnect);
     socket.on("disconnect", disconnect);
 
-    socket.on("test-status", (data) => {
-      if (!system) return;
-      isQualifiedToTakeTest(data);
-    });
+    socket.on("test-status", testStatus);
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", disconnect);
+      socket.off("test-status", testStatus);
     };
   }, [system]);
 

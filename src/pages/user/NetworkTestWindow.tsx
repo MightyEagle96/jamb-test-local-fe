@@ -188,28 +188,17 @@ function NetworkTestPage({
   ];
 
   useEffect(() => {
-    console.log("🔥 Network heartbeat effect started");
-    console.log("connectedStatus:", connectedStatus);
-
     if (!connectedStatus) {
-      console.log("❌ Network test is not connected");
       return;
     }
 
     const interval = window.setInterval(() => {
       const currentTimeLeft = childTimeLeftRef.current;
 
-      console.log(
-        "🔥 Sending network test response",
-        "timeLeft:",
-        currentTimeLeft,
-      );
-
       saveResponse(currentTimeLeft);
     }, 60_000);
 
     return () => {
-      console.log("🧹 Cleaning network heartbeat");
       window.clearInterval(interval);
     };
   }, [connectedStatus]);
@@ -563,7 +552,6 @@ function NetworkTestWindow() {
         "/network-test-responses/saveresponses",
         { timeLeft: timeRemaining, computer, networkTest: testId },
       );
-      console.log(data);
       setQuestion(data);
     } catch (error) {}
   };

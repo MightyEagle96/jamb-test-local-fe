@@ -33,8 +33,6 @@ function NetworkTestConcludedPage({
     };
 
     const onEndTest = (data: string) => {
-      console.log("🏁 END TEST EVENT:", data);
-
       if (data === testId) {
         navigate("/");
       }
@@ -48,14 +46,10 @@ function NetworkTestConcludedPage({
     // ⭐ IMPORTANT
     // The socket may already have connected before this component mounted.
     if (socket.connected) {
-      console.log("🟢 SOCKET WAS ALREADY CONNECTED");
-
       setConnected(true);
     }
 
     return () => {
-      console.log("🧹 NetworkTestPage socket effect unmounted");
-
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("end-test", onEndTest);

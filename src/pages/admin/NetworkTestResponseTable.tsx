@@ -19,6 +19,7 @@ interface Props {
 }
 
 function NetworkTestResponsesTable({ responses }: Props) {
+  console.log(responses);
   const formatTimeLeft = (milliseconds: number) => {
     const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
 

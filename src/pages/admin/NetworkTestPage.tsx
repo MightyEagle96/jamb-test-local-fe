@@ -138,7 +138,7 @@ function NetworkTestPage() {
 
     const interval = setInterval(() => {
       loadResponses();
-    }, 60_000);
+    }, 30_000);
 
     return () => clearInterval(interval);
 
@@ -210,6 +210,8 @@ function NetworkTestPage() {
       await httpService.patch(`/network-test/activate/${test._id}`);
 
       toast.success("Network test activated.");
+
+      loadResponses();
 
       fetchNetworkTest();
     } catch (error: any) {

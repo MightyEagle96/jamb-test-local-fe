@@ -517,12 +517,23 @@ function NetworkTestWindow() {
     };
 
     const onEndTest = (data: string) => {
-      console.log("🏁 END TEST EVENT:", data);
-
       if (data === testId) {
         navigate("/");
       }
     };
+
+    const handleJoined = (data: unknown) => {
+      console.log("Joined network test:", data);
+    };
+    socket.on("network-test-joined", handleJoined);
+    socket.emit("join-network-test", { networkTest: testId, computer });
+
+    const handleError = (error: unknown) => {
+      console.error("Network test socket error:", error);
+    };
+
+    //socket.on("network-test-joined", handleJoined);
+    socket.on("network-test-error", handleError);
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
@@ -544,8 +555,11 @@ function NetworkTestWindow() {
       socket.off("disconnect", onDisconnect);
       socket.off("end-test", onEndTest);
       socket.off("reconnect", onReconnect);
+
+      socket.off("network-test-joined", handleJoined);
+      socket.off("network-test-error", handleError);
     };
-  }, [testId, navigate]);
+  }, [testId]);
   const saveResponse = async (timeRemaining: number) => {
     try {
       const { data } = await httpService.post(

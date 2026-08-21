@@ -104,7 +104,6 @@ function NetworkTestPage() {
       );
 
       setNetworkTestResponses(response.data.data);
-      console.log(response.data);
     } catch (error) {
       toastError(error);
     }
@@ -127,6 +126,18 @@ function NetworkTestPage() {
       );
     }
   };
+
+  const calculateResponseThroughput = async () => {
+    await httpService.get("/network-test/calculate_response_throughput", {
+      params: { networkTest: id },
+    });
+  };
+
+  const calculateNetworkLosses = async () => {
+    await httpService.get("/network-test/calculate_network_losses", {
+      params: { networkTest: id },
+    });
+  };
   useEffect(() => {
     if (!id) {
       setError("Network test ID is missing.");
@@ -134,10 +145,14 @@ function NetworkTestPage() {
       return;
     }
 
+    calculateResponseThroughput();
     getAllData();
 
     const interval = setInterval(() => {
       loadResponses();
+      fetchNetworkTest();
+      calculateNetworkLosses();
+      calculateResponseThroughput();
     }, 30_000);
 
     return () => clearInterval(interval);

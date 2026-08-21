@@ -149,7 +149,53 @@ function NetworkTest() {
     }
   };
 
+  // const deleteNetworkTest = async (examId: string) => {
+  //   try {
+  //     await httpService.delete(`/network-test/delete/${examId}`);
+
+  //     toast.success("Network test deleted.");
+
+  //     setNetworkTests((current) =>
+  //       current.filter((test) => test._id !== examId),
+  //     );
+  //   } catch (error) {
+  //     console.error("Failed to delete network test:", error);
+  //     toastError(error);
+  //   }
+  // };
+
   const deleteNetworkTest = async (examId: string) => {
+    const result = await Swal.fire({
+      title: "Delete Network Test?",
+      text: "This action cannot be undone. Are you sure you want to delete this network test?",
+      icon: "warning",
+
+      showCancelButton: true,
+
+      confirmButtonText: "Yes, Delete Test",
+      cancelButtonText: "Cancel",
+
+      reverseButtons: true,
+
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
+
+      customClass: {
+        popup: "rounded-2xl",
+        title: "text-slate-800",
+        htmlContainer: "text-slate-500",
+
+        confirmButton: "rounded-xl px-5 py-3 font-semibold",
+
+        cancelButton: "rounded-xl px-5 py-3 font-semibold",
+      },
+    });
+
+    // User cancelled
+    if (!result.isConfirmed) {
+      return;
+    }
+
     try {
       await httpService.delete(`/network-test/delete/${examId}`);
 
@@ -160,6 +206,7 @@ function NetworkTest() {
       );
     } catch (error) {
       console.error("Failed to delete network test:", error);
+
       toastError(error);
     }
   };

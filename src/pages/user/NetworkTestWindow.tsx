@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import QuestionDisplay from "./QuestionDisplay";
 import NetworkDisconnectedPage from "./NetworkDisconnected";
+import { toast } from "sonner";
 
 interface Question {
   id: number;
@@ -70,6 +71,7 @@ interface NetworkTestPageProps {
   ipAddress: string;
   question: Question;
   saveResponse: (timeLeft: number) => void;
+  endTest: () => void;
 }
 
 function NetworkTestPage({
@@ -79,8 +81,8 @@ function NetworkTestPage({
   ipAddress,
   question,
   saveResponse,
+  endTest,
 }: NetworkTestPageProps) {
-  const [params] = useSearchParams();
   const [childTimeLeft, setChildTimeLeft] = useState(0);
 
   const [responseCount, setResponseCount] = useState(0);
@@ -88,9 +90,6 @@ function NetworkTestPage({
   const [lastResponseAt, setLastResponseAt] = useState<Date | null>(null);
 
   const childTimeLeftRef = useRef(childTimeLeft);
-
-  const testId = params.get("id");
-  const navigate = useNavigate();
 
   /*
    * ---------------------------------------------------------
@@ -196,6 +195,10 @@ function NetworkTestPage({
       const currentTimeLeft = childTimeLeftRef.current;
 
       saveResponse(currentTimeLeft);
+
+      //  if (currentTimeLeft <= 0) {
+      //    endTest();
+      //  }
     }, 60_000);
 
     return () => {
@@ -288,7 +291,7 @@ function NetworkTestPage({
                         colorsTime={[7, 5, 2, 0]}
                         onComplete={() => {
                           // Test has ended
-                          navigate("/concluded?id=" + testId);
+                          endTest();
                         }}
                         onUpdate={(e) => {
                           setChildTimeLeft(e * 1000);
@@ -567,7 +570,24 @@ function NetworkTestWindow() {
         { timeLeft: timeRemaining, computer, networkTest: testId },
       );
       setQuestion(data);
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Unable to save response. Please try again.");
+    }
+  };
+
+  const endTest = async () => {
+    try {
+      const { data } = await httpService.post("/network-test-responses/end", {
+        networkTest: testId,
+        computer,
+      });
+
+      if (data) {
+        navigate(`/concluded?test=${testId}&computer=${computer}`);
+      }
+    } catch (error) {
+      toastError(error);
+    }
   };
 
   if (!connected) return <NetworkDisconnectedPage />;
@@ -582,6 +602,7 @@ function NetworkTestWindow() {
           ipAddress={ipAddress}
           question={question as Question}
           saveResponse={saveResponse}
+          endTest={endTest}
         />
       )}
     </div>

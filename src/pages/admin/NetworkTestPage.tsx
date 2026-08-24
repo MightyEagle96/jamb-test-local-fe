@@ -7,6 +7,7 @@ import {
   Clock3,
   Monitor,
   Play,
+  Square,
   Upload,
   WifiOff,
 } from "lucide-react";
@@ -77,6 +78,7 @@ function NetworkTestPage() {
   const [test, setTest] = useState<NetworkTest | null>(null);
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState(false);
+  const [ending, setEnding] = useState(false);
   const [error, setError] = useState("");
   const [networkTestResponses, setNetworkTestResponses] = useState<
     NetworkTestResponse[]
@@ -159,6 +161,95 @@ function NetworkTestPage() {
 
     // fetchNetworkTest();
   }, [id]);
+
+  // const endTest = async () => {
+  //   try {
+  //     setEnding(true);
+
+  //     await httpService.patch(`/network-test/end/${id}`);
+
+  //     // await networkTestService.endNetworkTest(test._id);
+
+  //     toast.success("Network test ended successfully.");
+
+  //     // Refresh the test so the final metrics are displayed.
+  //     await fetchNetworkTest();
+  //   } catch (error) {
+  //     console.error("Failed to end network test:", error);
+  //     toastError(error);
+  //   } finally {
+  //     setEnding(false);
+  //   }
+  // };
+
+  const endTest = async () => {
+    const result = await Swal.fire({
+      title: "End network test?",
+      text: "This will end the test and calculate the final response metrics. This action cannot be undone.",
+      icon: "warning",
+
+      showCancelButton: true,
+
+      confirmButtonText: "Yes, end test",
+      cancelButtonText: "Continue testing",
+
+      reverseButtons: true,
+
+      buttonsStyling: false,
+
+      customClass: {
+        popup: "rounded-3xl",
+        title: "text-xl font-bold text-slate-800",
+        htmlContainer: "text-sm text-slate-500",
+
+        confirmButton: `
+      rounded-xl
+      bg-rose-50
+      px-5
+      py-3
+      text-sm
+      font-bold
+      text-rose-700
+      border
+      border-rose-200
+      transition-all
+      hover:bg-rose-100
+      ms-3
+    `,
+
+        cancelButton: `
+      rounded-xl
+      bg-emerald-700
+      px-5
+      py-3
+      text-sm
+      font-bold
+      text-white
+      transition-all
+      hover:bg-emerald-800
+    `,
+      },
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+      setEnding(true);
+
+      await httpService.patch(`/network-test/end/${id}`);
+
+      toast.success("Network test ended successfully.");
+
+      await fetchNetworkTest();
+    } catch (error) {
+      console.error("Failed to end network test:", error);
+      toastError(error);
+    } finally {
+      setEnding(false);
+    }
+  };
 
   /**
    * Activate a pending network test.
@@ -475,24 +566,34 @@ function NetworkTestPage() {
                   {activating ? "Activating..." : "Activate Test"}
                 </button>
               )}
-
               {test.status === "active" && (
-                <div
+                <button
+                  type="button"
+                  onClick={endTest}
+                  disabled={ending}
                   className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-2xl
-              bg-white/15
-              px-5
-              py-3.5
-              text-sm
-              font-semibold
-            "
+      inline-flex
+      items-center
+      justify-center
+      gap-2
+      rounded-2xl
+      bg-rose-100
+      px-6
+      py-3.5
+      text-sm
+      font-bold
+      text-rose-700
+      shadow-sm
+      transition
+      hover:bg-rose-200
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+    "
                 >
-                  <Activity size={17} />
-                  Test is currently active
-                </div>
+                  <Square size={16} />
+
+                  {ending ? "Ending Test..." : "End Test"}
+                </button>
               )}
 
               {test.status === "ended" && (
@@ -594,10 +695,10 @@ function NetworkTestPage() {
             value={test.computersWithNetworkLosses.toLocaleString()}
           />
 
-          <StatCard
+          {/* <StatCard
             label="Lost in Transport"
             value={test.lostInTransport.toLocaleString()}
-          />
+          /> */}
 
           <StatCard
             label="Ended Computers"
@@ -839,46 +940,46 @@ function StatCard({ label, value }: { label: string; value: string }) {
    TIMELINE
 ============================================================= */
 
-function TimelineItem({
-  label,
-  date,
-  active = false,
-}: {
-  label: string;
-  date: string;
-  active?: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-4 py-4">
-      <div className="relative flex flex-col items-center">
-        <div
-          className={`
-            flex
-            h-10
-            w-10
-            items-center
-            justify-center
-            rounded-full
-            ${
-              active
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-slate-100 text-slate-400"
-            }
-          `}
-        >
-          <CheckCircle2 size={19} />
-        </div>
-      </div>
+// function TimelineItem({
+//   label,
+//   date,
+//   active = false,
+// }: {
+//   label: string;
+//   date: string;
+//   active?: boolean;
+// }) {
+//   return (
+//     <div className="flex items-center gap-4 py-4">
+//       <div className="relative flex flex-col items-center">
+//         <div
+//           className={`
+//             flex
+//             h-10
+//             w-10
+//             items-center
+//             justify-center
+//             rounded-full
+//             ${
+//               active
+//                 ? "bg-emerald-100 text-emerald-700"
+//                 : "bg-slate-100 text-slate-400"
+//             }
+//           `}
+//         >
+//           <CheckCircle2 size={19} />
+//         </div>
+//       </div>
 
-      <div className="flex-1">
-        <p className="text-sm font-semibold text-slate-700">{label}</p>
+//       <div className="flex-1">
+//         <p className="text-sm font-semibold text-slate-700">{label}</p>
 
-        <p className="mt-1 text-xs text-slate-400">
-          {new Date(date).toLocaleString()}
-        </p>
-      </div>
-    </div>
-  );
-}
+//         <p className="mt-1 text-xs text-slate-400">
+//           {new Date(date).toLocaleString()}
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }
 
 export default NetworkTestPage;

@@ -13,7 +13,7 @@ function NetworkTestConcludedPage({
 }: NetworkTestConcludedPageProps) {
   const [params] = useSearchParams();
 
-  const testId = params.get("id");
+  const testId = params.get("test");
   const computer = params.get("computer");
 
   const [connected, setConnected] = useState(false);

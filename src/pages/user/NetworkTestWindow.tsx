@@ -161,7 +161,7 @@ function NetworkTestPage({
     },
     {
       label: "Memory",
-      value: `${system.memory.totalGB} GB`,
+      value: `${Math.ceil(system.memory.totalBytes / 1024 ** 3).toFixed(2)} GB`,
       icon: Database,
     },
     {
@@ -195,6 +195,7 @@ function NetworkTestPage({
       const currentTimeLeft = childTimeLeftRef.current;
 
       saveResponse(currentTimeLeft);
+      setResponseCount((prev) => prev + 1);
 
       //  if (currentTimeLeft <= 0) {
       //    endTest();
@@ -525,6 +526,10 @@ function NetworkTestWindow() {
       }
     };
 
+    const endTestAdminEvent = () => {
+      navigate(`/concluded?test=${testId}&computer=${computer}`);
+    };
+
     const handleJoined = (data: unknown) => {
       console.log("Joined network test:", data);
     };
@@ -537,6 +542,7 @@ function NetworkTestWindow() {
 
     //socket.on("network-test-joined", handleJoined);
     socket.on("network-test-error", handleError);
+    socket.on("end-test-admin", endTestAdminEvent);
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
@@ -561,6 +567,8 @@ function NetworkTestWindow() {
 
       socket.off("network-test-joined", handleJoined);
       socket.off("network-test-error", handleError);
+
+      socket.off("end-test-admin", endTestAdminEvent);
     };
   }, [testId]);
   const saveResponse = async (timeRemaining: number) => {

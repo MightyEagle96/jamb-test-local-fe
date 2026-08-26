@@ -1,0 +1,107 @@
+ <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
+        {/* Operating System */}
+
+        <SystemCard icon={<Monitor size={22} />} title="Operating System">
+          <p className="break-words font-semibold leading-6 text-slate-800">
+            {system.operatingSystem.name}
+          </p>
+
+          <p className="mt-2 text-sm text-slate-500">
+            Version {system.operatingSystem.version} •{" "}
+            {system.operatingSystem.architecture}
+          </p>
+
+          <p className="mt-1 text-sm text-slate-500">
+            {system.operatingSystem.hostname}
+          </p>
+        </SystemCard>
+
+        {/* Processor */}
+
+        <SystemCard icon={<Cpu size={22} />} title="Processor">
+          <p className="break-words font-semibold leading-6 text-slate-800">
+            {system.processor.model}
+          </p>
+
+          <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-500">
+            <span>{system.processor.cores} Cores</span>
+
+            <span>{system.processor.clockSpeedGHz} GHz</span>
+          </div>
+        </SystemCard>
+
+        {/* Memory */}
+
+        <SystemCard icon={<HardDrive size={22} />} title="Memory">
+          <p className="text-2xl font-black text-emerald-700 lg:text-3xl">
+            {system.memory.totalGB} GB
+          </p>
+
+          <p className="mt-2 text-sm text-slate-500">
+            Installed Physical Memory
+          </p>
+        </SystemCard>
+
+        {/* Network */}
+
+        <SystemCard icon={<Network size={22} />} title="Network">
+          <p className="break-all font-semibold text-slate-800">
+            {system.network.hostname}
+          </p>
+
+          <p className="mt-2 break-all text-sm text-slate-500">
+            {system.network.macAddress}
+          </p>
+        </SystemCard>
+
+        {/* Machine Identity */}
+
+        <SystemCard icon={<ShieldCheck size={22} />} title="Machine Identity">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            Machine Serial Number
+          </p>
+
+          <p className="mt-2 break-all font-mono text-lg font-bold text-emerald-700 md:text-xl">
+            {system.identity.serialNumber}
+          </p>
+        </SystemCard>
+
+        <div
+          className="
+        rounded-2xl
+        border
+        border-emerald-200
+        bg-gradient-to-br
+        from-emerald-50
+        to-green-50
+        p-6
+        flex
+        items-center
+        justify-center
+    "
+        >
+          <button
+            onClick={onRegister}
+            className="
+            w-full
+            rounded-2xl
+            bg-gradient-to-r
+            from-emerald-700
+            via-green-600
+            to-lime-600
+            px-8
+            py-4
+            font-semibold
+            text-white
+            shadow-lg
+            transition-all
+            duration-300
+            hover:-translate-y-0.5
+            hover:shadow-xl
+            active:scale-[0.98]
+        "
+          >
+            Register Computer →
+          </button>
+        </div>
+      </div>

@@ -142,7 +142,7 @@ function NetworkTest() {
   const viewNetworkTest = async () => {
     try {
       const { data } = await httpService.get("/network-test/view_all");
-      console.log(data);
+
       setNetworkTests(data);
     } catch (error) {
       toastError(error);

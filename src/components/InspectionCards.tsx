@@ -1,6 +1,13 @@
-import { Cpu, HardDrive, Monitor, Network, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Cpu,
+  HardDrive,
+  Monitor,
+  Network,
+  ShieldCheck,
+} from "lucide-react";
 
-import SystemCard from "./SystemCard";
+//import SystemCard from "./SystemCard";
 import type { SystemInformation } from "../types/system";
 
 interface Props {
@@ -25,114 +32,215 @@ export default function InspectionCards({ system, onRegister }: Props) {
       </div>
 
       {/* Cards */}
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        {/* Header */}
+        <div className="flex flex-col gap-4 border-b border-slate-100 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* Header information */}
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+              <Monitor size={18} />
+            </div>
 
-      <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
-        {/* Operating System */}
+            <div>
+              <h2 className="text-sm font-bold text-slate-800">
+                System Information
+              </h2>
 
-        <SystemCard icon={<Monitor size={22} />} title="Operating System">
-          <p className="break-words font-semibold leading-6 text-slate-800">
-            {system.operatingSystem.name}
-          </p>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Version {system.operatingSystem.version} •{" "}
-            {system.operatingSystem.architecture}
-          </p>
-
-          <p className="mt-1 text-sm text-slate-500">
-            {system.operatingSystem.hostname}
-          </p>
-        </SystemCard>
-
-        {/* Processor */}
-
-        <SystemCard icon={<Cpu size={22} />} title="Processor">
-          <p className="break-words font-semibold leading-6 text-slate-800">
-            {system.processor.model}
-          </p>
-
-          <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-500">
-            <span>{system.processor.cores} Cores</span>
-
-            <span>{system.processor.clockSpeedGHz} GHz</span>
+              <p className="text-xs text-slate-500">
+                Computer details detected by the JAMB Test Agent
+              </p>
+            </div>
           </div>
-        </SystemCard>
 
-        {/* Memory */}
-
-        <SystemCard icon={<HardDrive size={22} />} title="Memory">
-          <p className="text-2xl font-black text-emerald-700 lg:text-3xl">
-            {system.memory.totalGB} GB
-          </p>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Installed Physical Memory
-          </p>
-        </SystemCard>
-
-        {/* Network */}
-
-        <SystemCard icon={<Network size={22} />} title="Network">
-          <p className="break-all font-semibold text-slate-800">
-            {system.network.hostname}
-          </p>
-
-          <p className="mt-2 break-all text-sm text-slate-500">
-            {system.network.macAddress}
-          </p>
-        </SystemCard>
-
-        {/* Machine Identity */}
-
-        <SystemCard icon={<ShieldCheck size={22} />} title="Machine Identity">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-            Machine Serial Number
-          </p>
-
-          <p className="mt-2 break-all font-mono text-lg font-bold text-emerald-700 md:text-xl">
-            {system.identity.serialNumber}
-          </p>
-        </SystemCard>
-
-        <div
-          className="
-        rounded-2xl
-        border
-        border-emerald-200
-        bg-gradient-to-br
-        from-emerald-50
-        to-green-50
-        p-6
-        flex
-        items-center
-        justify-center
+          {/* Register action */}
+          <button
+            type="button"
+            onClick={onRegister}
+            className="
+      inline-flex
+      items-center
+      justify-center
+      gap-2
+      rounded-xl
+      bg-gradient-to-r
+      from-emerald-700
+      via-green-600
+      to-lime-600
+      px-5
+      py-2.5
+      text-sm
+      font-bold
+      text-white
+      shadow-sm
+      transition-all
+      duration-200
+      hover:-translate-y-0.5
+      hover:shadow-md
+      active:scale-[0.98]
     "
-        >
+          >
+            Register Computer
+            <ArrowRight size={16} />
+          </button>
+        </div>
+
+        <div className="divide-y divide-slate-100">
+          {/* Operating System */}
+          <SystemSection title="Operating System" icon={<Monitor size={17} />}>
+            <SystemRow label="Name" value={system.operatingSystem.name} />
+
+            <SystemRow label="Version" value={system.operatingSystem.version} />
+
+            <SystemRow
+              label="Build"
+              value={system.operatingSystem.buildNumber}
+            />
+
+            <SystemRow
+              label="Architecture"
+              value={system.operatingSystem.architecture}
+            />
+
+            <SystemRow
+              label="Hostname"
+              value={system.operatingSystem.hostname}
+            />
+          </SystemSection>
+
+          {/* Processor */}
+          <SystemSection title="Processor" icon={<Cpu size={17} />}>
+            <SystemRow
+              label="Manufacturer"
+              value={system.processor.manufacturer}
+            />
+
+            <SystemRow label="Model" value={system.processor.model} />
+
+            <SystemRow label="Cores" value={`${system.processor.cores}`} />
+
+            <SystemRow
+              label="Clock Speed"
+              value={`${system.processor.clockSpeedGHz} GHz`}
+            />
+          </SystemSection>
+
+          {/* Memory */}
+          <SystemSection title="Memory" icon={<HardDrive size={17} />}>
+            <SystemRow
+              label="Total Memory"
+              value={`${Math.ceil(system.memory.totalBytes / 1024 ** 3).toFixed(2)} GB`}
+            />
+
+            <SystemRow
+              label="Usable Memory"
+              value={`${(system.memory.totalBytes / 1024 ** 3).toFixed(2)} GB`}
+            />
+          </SystemSection>
+
+          {/* Network */}
+          <SystemSection title="Network" icon={<Network size={17} />}>
+            <SystemRow label="Hostname" value={system.network.hostname} />
+
+            <SystemRow
+              label="MAC Address"
+              value={system.network.macAddress}
+              mono
+            />
+          </SystemSection>
+
+          {/* Identity */}
+          <SystemSection
+            title="Machine Identity"
+            icon={<ShieldCheck size={17} />}
+          >
+            <SystemRow
+              label="Serial Number"
+              value={system.identity.serialNumber}
+              mono
+            />
+          </SystemSection>
+        </div>
+
+        {/* Action */}
+        {/* <div className="border-t border-slate-100 bg-slate-50 p-4">
           <button
             onClick={onRegister}
             className="
-            w-full
-            rounded-2xl
-            bg-gradient-to-r
-            from-emerald-700
-            via-green-600
-            to-lime-600
-            px-8
-            py-4
-            font-semibold
-            text-white
-            shadow-lg
-            transition-all
-            duration-300
-            hover:-translate-y-0.5
-            hover:shadow-xl
-            active:scale-[0.98]
-        "
+        w-full
+        rounded-xl
+        bg-gradient-to-r
+        from-emerald-700
+        via-green-600
+        to-lime-600
+        px-6
+        py-3
+        text-sm
+        font-bold
+        text-white
+        shadow-sm
+        transition-all
+        duration-200
+        hover:-translate-y-0.5
+        hover:shadow-md
+        active:scale-[0.98]
+      "
           >
             Register Computer →
           </button>
-        </div>
+        </div> */}
       </div>
+    </div>
+  );
+}
+
+function SystemRow({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="flex min-h-9 items-center justify-between gap-6 py-1.5">
+      <span className="shrink-0 text-xs font-medium text-slate-400">
+        {label}
+      </span>
+
+      <span
+        className={`
+          min-w-0
+          break-all
+          text-right
+          text-xs
+          font-semibold
+          text-slate-700
+          ${mono ? "font-mono" : ""}
+        `}
+      >
+        {value || "—"}
+      </span>
+    </div>
+  );
+}
+function SystemSection({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="px-5 py-3">
+      <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700">
+        {icon}
+        {title}
+      </div>
+
+      <div className="divide-y divide-slate-50">{children}</div>
     </div>
   );
 }

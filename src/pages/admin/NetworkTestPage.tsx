@@ -3,13 +3,13 @@ import { Link, useParams } from "react-router-dom";
 import {
   Activity,
   ArrowLeft,
-  CheckCircle2,
   Clock3,
   Monitor,
   Play,
   Square,
   Upload,
   WifiOff,
+  Loader2,
 } from "lucide-react";
 import httpService from "../../services/http.service";
 import { useAppUser } from "../../contexts/AppUserContext";
@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import { toastError } from "../../components/CustomToast";
 import { toast } from "sonner";
 import NetworkTestResponsesTable from "./NetworkTestResponseTable";
+import NetworkTestUploadDialog from "../../components/UploadDialog";
 
 type NetworkTestStatus = "pending" | "active" | "ended" | "uploaded";
 
@@ -32,10 +33,6 @@ interface NetworkTestResponse {
   timeLeft: number;
   status: string;
   networkLosses: number;
-}
-
-interface Props {
-  responses: NetworkTestResponse[];
 }
 
 interface NetworkTest {
@@ -83,11 +80,16 @@ function NetworkTestPage() {
   const [networkTestResponses, setNetworkTestResponses] = useState<
     NetworkTestResponse[]
   >([]);
-
+  const [uploading, setUploading] = useState(false);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const { user } = useAppUser();
   /**
    * Fetch the network test.
    */
+
+  const uploadTestResult = () => {
+    setUploadDialogOpen(true);
+  };
 
   const getAllData = async () => {
     setLoading(true);
@@ -116,6 +118,7 @@ function NetworkTestPage() {
 
       const response = await httpService.get(`/network-test/view/${id}`);
 
+      console.log(response.data);
       setTest(response.data);
     } catch (error: any) {
       console.error(
@@ -161,26 +164,6 @@ function NetworkTestPage() {
 
     // fetchNetworkTest();
   }, [id]);
-
-  // const endTest = async () => {
-  //   try {
-  //     setEnding(true);
-
-  //     await httpService.patch(`/network-test/end/${id}`);
-
-  //     // await networkTestService.endNetworkTest(test._id);
-
-  //     toast.success("Network test ended successfully.");
-
-  //     // Refresh the test so the final metrics are displayed.
-  //     await fetchNetworkTest();
-  //   } catch (error) {
-  //     console.error("Failed to end network test:", error);
-  //     toastError(error);
-  //   } finally {
-  //     setEnding(false);
-  //   }
-  // };
 
   const endTest = async () => {
     const result = await Swal.fire({
@@ -596,7 +579,7 @@ function NetworkTestPage() {
                 </button>
               )}
 
-              {test.status === "ended" && (
+              {/* {test.status === "ended" && (
                 <div
                   className="
               inline-flex
@@ -613,6 +596,48 @@ function NetworkTestPage() {
                   <CheckCircle2 size={17} />
                   Test ended
                 </div>
+              )} */}
+
+              {test.status === "ended" && (
+                <button
+                  type="button"
+                  onClick={uploadTestResult}
+                  disabled={uploading}
+                  className="
+      inline-flex
+      items-center
+      justify-center
+      gap-2
+      rounded-2xl
+      bg-white
+      px-5
+      py-3.5
+      text-sm
+      font-bold
+      text-emerald-700
+      shadow-lg
+      transition-all
+      duration-200
+      hover:-translate-y-0.5
+      hover:bg-emerald-50
+      hover:shadow-xl
+      active:scale-[0.98]
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+    "
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 size={17} className="animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={17} />
+                      Upload Test Results
+                    </>
+                  )}
+                </button>
               )}
 
               {test.status === "uploaded" && (
@@ -861,6 +886,18 @@ function NetworkTestPage() {
           <NetworkTestResponsesTable responses={networkTestResponses} />
         </div>
       </section>
+      <NetworkTestUploadDialog
+        open={uploadDialogOpen}
+        onClose={() => setUploadDialogOpen(false)}
+        onUpload={uploadTestResult}
+        computersParticipated={networkTestResponses.length}
+        centreCapacity={user?.centreCapacity ?? 0}
+        responseThroughput={test.responseThroughput}
+        duration={test.duration}
+        computersWithNetworkLosses={test.computersWithNetworkLosses}
+        totalNetworkLosses={test.totalNetworkLosses}
+        uploading={uploading}
+      />
     </main>
   );
 }

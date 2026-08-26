@@ -1,4 +1,4 @@
-import { CheckCircle2, Network, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Network, ShieldCheck, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { socket } from "../../services/socket.service";
@@ -136,8 +136,7 @@ function NetworkTestConcludedPage() {
 
                 <p className="mt-2 text-sm leading-6 text-emerald-800">
                   This computer has completed the network test. The responses
-                  recorded during the test have been submitted to the central
-                  JAMB Test system.
+                  recorded during the test have been submitted to the server.
                 </p>
               </div>
             </div>
@@ -150,36 +149,6 @@ function NetworkTestConcludedPage() {
             </h3>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              {/* Duration
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="
-                      flex
-                      h-10
-                      w-10
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-white
-                      text-slate-500
-                      shadow-sm
-                    "
-                  >
-                    <Clock3 size={19} />
-                  </div>
-
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                      Test Duration
-                    </p>
-
-                    <p className="mt-1 text-sm font-bold text-slate-700">
-                      {duration ? `${duration} minutes` : "Completed"}
-                    </p>
-                  </div>
-                </div>
-              </div> */}
               {/* Responses */}
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <div className="flex items-center gap-3">
@@ -225,7 +194,7 @@ function NetworkTestConcludedPage() {
                       shadow-sm
                     "
                   >
-                    <Network size={19} />
+                    <WifiOff size={19} />
                   </div>
 
                   <div>
@@ -245,8 +214,9 @@ function NetworkTestConcludedPage() {
           {/* Information */}
           <div className="border-t border-slate-100 bg-slate-50 px-6 py-6 sm:px-8">
             <p className="text-center text-sm leading-6 text-slate-500">
-              Please wait for further instructions from the centre
-              administrator. You may now close this window.
+              You may now close this window or remain on this page. When a new
+              test is created it will automatically take you to the home page
+              and join the activated test.
             </p>
           </div>
         </div>

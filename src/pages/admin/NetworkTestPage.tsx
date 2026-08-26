@@ -594,26 +594,7 @@ function NetworkTestPage() {
                 </button>
               )}
 
-              {/* {test.status === "ended" && (
-                <div
-                  className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-2xl
-              bg-white/15
-              px-5
-              py-3.5
-              text-sm
-              font-semibold
-            "
-                >
-                  <CheckCircle2 size={17} />
-                  Test ended
-                </div>
-              )} */}
-
-              {test.status === "ended" && (
+              {(test.status === "ended" || test.status === "uploaded") && (
                 <button
                   type="button"
                   onClick={() => setUploadDialogOpen(!uploadDialogOpen)}
@@ -655,7 +636,7 @@ function NetworkTestPage() {
                 </button>
               )}
 
-              {test.status === "uploaded" && (
+              {/* {test.status === "uploaded" && (
                 <div
                   className="
               inline-flex
@@ -672,7 +653,7 @@ function NetworkTestPage() {
                   <Upload size={17} />
                   Results uploaded
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>

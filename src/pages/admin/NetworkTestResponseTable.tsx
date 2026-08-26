@@ -1,4 +1,13 @@
-import { CheckCircle2, Clock3, Monitor, Wifi, WifiOff } from "lucide-react";
+import {
+  CheckCircle2,
+  Clock3,
+  Monitor,
+  Wifi,
+  WifiOff,
+  Search,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 
 interface NetworkTestResponse {
   _id: string;
@@ -19,7 +28,11 @@ interface Props {
 }
 
 function NetworkTestResponsesTable({ responses }: Props) {
-  console.log(responses);
+  const [ipSearch, setIpSearch] = useState("");
+
+  const filteredResponses = responses.filter((response) =>
+    response.ipAddress?.toLowerCase().includes(ipSearch.trim().toLowerCase()),
+  );
   const formatTimeLeft = (milliseconds: number) => {
     const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
 
@@ -75,7 +88,7 @@ function NetworkTestResponsesTable({ responses }: Props) {
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <div className="flex flex-col gap-4 border-b border-slate-200 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="text-sm font-bold text-slate-800">
             Connected Systems
@@ -86,19 +99,89 @@ function NetworkTestResponsesTable({ responses }: Props) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
-          {responses.length} Systems
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          {/* IP Search */}
+          <div className="relative">
+            <Search
+              size={15}
+              className="
+          pointer-events-none
+          absolute
+          left-3
+          top-1/2
+          -translate-y-1/2
+          text-slate-400
+        "
+            />
+
+            <input
+              type="text"
+              value={ipSearch}
+              onChange={(e) => setIpSearch(e.target.value)}
+              placeholder="Search IP address..."
+              className="
+          h-9
+          w-full
+          rounded-xl
+          border
+          border-slate-200
+          bg-white
+          pl-9
+          pr-9
+          text-xs
+          font-medium
+          text-slate-700
+          outline-none
+          transition
+          placeholder:text-slate-400
+          focus:border-emerald-400
+          focus:ring-2
+          focus:ring-emerald-500/10
+          sm:w-56
+        "
+            />
+
+            {ipSearch && (
+              <button
+                type="button"
+                onClick={() => setIpSearch("")}
+                className="
+            absolute
+            right-2.5
+            top-1/2
+            -translate-y-1/2
+            rounded-md
+            p-1
+            text-slate-400
+            transition
+            hover:bg-slate-100
+            hover:text-slate-600
+          "
+                aria-label="Clear IP search"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* System Count */}
+          <div className="flex shrink-0 items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+
+            {ipSearch
+              ? `${filteredResponses.length} of ${responses.length} Systems`
+              : `${responses.length} Systems`}
+          </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="max-h-[50vh] overflow-auto">
         <table className="w-full min-w-[850px] text-left">
-          <thead>
+          <thead className="sticky top-0 z-10">
             <tr className="border-b border-slate-100 bg-slate-50/70">
               <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 System
@@ -131,22 +214,52 @@ function NetworkTestResponsesTable({ responses }: Props) {
           </thead>
 
           <tbody className="divide-y divide-slate-100">
-            {responses.length === 0 ? (
+            {filteredResponses.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-16 text-center">
-                  <Monitor size={32} className="mx-auto text-slate-300" />
+                  {ipSearch ? (
+                    <>
+                      <Search size={32} className="mx-auto text-slate-300" />
 
-                  <p className="mt-3 text-sm font-medium text-slate-500">
-                    No systems connected yet
-                  </p>
+                      <p className="mt-3 text-sm font-medium text-slate-500">
+                        No matching systems found
+                      </p>
 
-                  <p className="mt-1 text-xs text-slate-400">
-                    Connected systems will appear here automatically.
-                  </p>
+                      <p className="mt-1 text-xs text-slate-400">
+                        No system matches IP address "{ipSearch}".
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => setIpSearch("")}
+                        className="
+              mt-4
+              text-xs
+              font-semibold
+              text-emerald-600
+              hover:text-emerald-700
+            "
+                      >
+                        Clear search
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Monitor size={32} className="mx-auto text-slate-300" />
+
+                      <p className="mt-3 text-sm font-medium text-slate-500">
+                        No systems connected yet
+                      </p>
+
+                      <p className="mt-1 text-xs text-slate-400">
+                        Connected systems will appear here automatically.
+                      </p>
+                    </>
+                  )}
                 </td>
               </tr>
             ) : (
-              responses.map((response, index) => {
+              filteredResponses.map((response, index) => {
                 const status = getStatus(response.status);
 
                 const StatusIcon = status.icon;

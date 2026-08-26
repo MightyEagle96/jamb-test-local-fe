@@ -197,6 +197,8 @@ function NetworkTestPage({
       saveResponse(currentTimeLeft);
       setResponseCount((prev) => prev + 1);
 
+      setLastResponseAt(new Date());
+
       //  if (currentTimeLeft <= 0) {
       //    endTest();
       //  }

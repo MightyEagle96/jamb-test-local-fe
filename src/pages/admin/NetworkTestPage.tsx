@@ -87,8 +87,27 @@ function NetworkTestPage() {
    * Fetch the network test.
    */
 
-  const uploadTestResult = () => {
-    setUploadDialogOpen(true);
+  const onUpload = async () => {
+    setUploading(true);
+    try {
+      const body = {
+        networkTest: test,
+        networkTestResponses: networkTestResponses,
+      };
+
+      await httpService.post("/network-test/upload", body, {
+        params: {
+          networkTest: id,
+        },
+      });
+      toast.success("Network test uploaded.");
+
+      setUploadDialogOpen(false);
+      fetchNetworkTest();
+    } catch (error) {
+      toastError(error);
+    }
+    setUploading(false);
   };
 
   const getAllData = async () => {
@@ -118,7 +137,6 @@ function NetworkTestPage() {
 
       const response = await httpService.get(`/network-test/view/${id}`);
 
-      console.log(response.data);
       setTest(response.data);
     } catch (error: any) {
       console.error(
@@ -153,6 +171,10 @@ function NetworkTestPage() {
     calculateResponseThroughput();
     getAllData();
 
+    if (test?.ended) {
+      return;
+    }
+
     const interval = setInterval(() => {
       loadResponses();
       fetchNetworkTest();
@@ -163,7 +185,7 @@ function NetworkTestPage() {
     return () => clearInterval(interval);
 
     // fetchNetworkTest();
-  }, [id]);
+  }, [id, test?.ended]);
 
   const endTest = async () => {
     const result = await Swal.fire({
@@ -227,7 +249,6 @@ function NetworkTestPage() {
 
       await fetchNetworkTest();
     } catch (error) {
-      console.error("Failed to end network test:", error);
       toastError(error);
     } finally {
       setEnding(false);
@@ -304,13 +325,7 @@ function NetworkTestPage() {
 
       fetchNetworkTest();
     } catch (error: any) {
-      console.error(
-        "Failed to activate network test:",
-        error.response?.data || error.message,
-      );
-
       toastError(error);
-      console.error(error);
     } finally {
       setActivating(false);
     }
@@ -601,7 +616,7 @@ function NetworkTestPage() {
               {test.status === "ended" && (
                 <button
                   type="button"
-                  onClick={uploadTestResult}
+                  onClick={() => setUploadDialogOpen(!uploadDialogOpen)}
                   disabled={uploading}
                   className="
       inline-flex
@@ -889,7 +904,7 @@ function NetworkTestPage() {
       <NetworkTestUploadDialog
         open={uploadDialogOpen}
         onClose={() => setUploadDialogOpen(false)}
-        onUpload={uploadTestResult}
+        onUpload={onUpload}
         computersParticipated={networkTestResponses.length}
         centreCapacity={user?.centreCapacity ?? 0}
         responseThroughput={test.responseThroughput}

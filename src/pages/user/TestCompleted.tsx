@@ -1,25 +1,44 @@
-import { CheckCircle2, Clock3, Network, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Network, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { socket } from "../../services/socket.service";
-interface NetworkTestConcludedPageProps {
-  responses?: number;
-  duration?: number;
-}
+import httpService from "../../services/http.service";
+import { toastError } from "../../components/CustomToast";
 
-function NetworkTestConcludedPage({
-  responses,
-  duration,
-}: NetworkTestConcludedPageProps) {
+function NetworkTestConcludedPage() {
   const [params] = useSearchParams();
 
   const testId = params.get("test");
   const computer = params.get("computer");
 
   const [connected, setConnected] = useState(false);
+  const [systemResponses, setResponses] = useState(0);
+  const [networkLosses, setNetworkLosses] = useState(0);
+
+  const getNetworkTest = async () => {
+    try {
+      const { data } = await httpService.get(
+        "/network-test-responses/findone",
+        {
+          params: {
+            networkTest: testId,
+            computer,
+          },
+        },
+      );
+
+      setNetworkLosses(data.data.networkLosses);
+      setResponses(data.data.responses);
+
+      console.log(data);
+    } catch (error) {
+      toastError(error);
+    }
+  };
 
   const navigate = useNavigate();
   useEffect(() => {
+    getNetworkTest();
     const onConnect = () => {
       setConnected(true);
     };
@@ -38,10 +57,14 @@ function NetworkTestConcludedPage({
       }
     };
 
+    const onStartNewTest = () => {
+      navigate("/");
+    };
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("reconnect", onReconnect);
     socket.on("end-test", onEndTest);
+    socket.on("start-new-test", onStartNewTest);
 
     // ⭐ IMPORTANT
     // The socket may already have connected before this component mounted.
@@ -54,6 +77,7 @@ function NetworkTestConcludedPage({
       socket.off("disconnect", onDisconnect);
       socket.off("end-test", onEndTest);
       socket.off("reconnect", onReconnect);
+      socket.off("start-new-test", onStartNewTest);
     };
   }, [testId, navigate]);
   return (
@@ -126,7 +150,7 @@ function NetworkTestConcludedPage({
             </h3>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              {/* Duration */}
+              {/* Duration
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <div className="flex items-center gap-3">
                   <div
@@ -155,8 +179,7 @@ function NetworkTestConcludedPage({
                     </p>
                   </div>
                 </div>
-              </div>
-
+              </div> */}
               {/* Responses */}
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <div className="flex items-center gap-3">
@@ -182,7 +205,36 @@ function NetworkTestConcludedPage({
                     </p>
 
                     <p className="mt-1 text-sm font-bold text-slate-700">
-                      {responses ?? 0}
+                      {systemResponses}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="
+                      flex
+                      h-10
+                      w-10
+                      items-center
+                      justify-center
+                      rounded-xl
+                      bg-white
+                      text-slate-500
+                      shadow-sm
+                    "
+                  >
+                    <Network size={19} />
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Network Losses
+                    </p>
+
+                    <p className="mt-1 text-sm font-bold text-slate-700">
+                      {networkLosses}
                     </p>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { AlertTriangle, RotateCw, Power } from "lucide-react";
+import { AlertTriangle, RotateCw } from "lucide-react";
 
 interface Props {
   onRetry: () => void;

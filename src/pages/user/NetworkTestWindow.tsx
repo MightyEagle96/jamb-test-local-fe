@@ -483,6 +483,8 @@ function NetworkTestWindow() {
   const [question, setQuestion] = useState<Question | null>(null);
   const navigate = useNavigate();
 
+  //const onServerLogout
+
   const getNetworkTest = async () => {
     try {
       const { data } = await httpService.get(

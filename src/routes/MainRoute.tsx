@@ -14,6 +14,7 @@ import NetworkTestPage from "../pages/admin/NetworkTestPage";
 import NetworkTestBlocked from "../pages/user/FailedTest";
 import NetworkTestWindow from "../pages/user/NetworkTestWindow";
 import NetworkTestConcludedPage from "../pages/user/TestCompleted";
+import ProfilePage from "../pages/admin/ProfilePage";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -33,6 +34,7 @@ function MainRoute() {
     { path: "/computers", element: <ComputerList /> },
     { path: "/network-tests", element: <NetworkTest /> },
     { path: "/network-tests/:id", element: <NetworkTestPage /> },
+    { path: "/profile", element: <ProfilePage centre={user as any} /> },
   ];
 
   const routesToShow = user ? privateRoutes : publicRoutes;

@@ -14,6 +14,7 @@ import { toastError } from "../../components/CustomToast";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../services/socket.service";
 
+export type Status = "not registered" | "awaiting upload" | "registered";
 export default function SystemInspectionPage() {
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +24,29 @@ export default function SystemInspectionPage() {
 
   const navigate = useNavigate();
 
+  const [registrationStatus, setRegistrationStatus] =
+    useState<Status>("not registered");
+
+  const checkSystemStatus = async (systemInfo: SystemInformation["data"]) => {
+    try {
+      const response = await httpService.get("computers/one", {
+        params: {
+          serialNumber: systemInfo.identity.serialNumber,
+
+          macAddress: systemInfo.network.macAddress,
+        },
+      });
+
+      if (response.status !== 404 && response.data.status === true) {
+        setRegistrationStatus("registered");
+      } else if (response.status !== 404 && response.data.status === false) {
+        setRegistrationStatus("awaiting upload");
+      }
+    } catch (error) {
+      toastError(error);
+    }
+  };
+
   const loadSystem = async () => {
     try {
       setLoading(true);
@@ -31,6 +55,8 @@ export default function SystemInspectionPage() {
       const response = await getSystemInformation();
 
       setSystem(response.data);
+
+      checkSystemStatus(response.data);
 
       toast.success("System inspection completed.");
     } catch (err) {
@@ -177,6 +203,8 @@ export default function SystemInspectionPage() {
             system,
           );
           toast.success(data.message);
+
+          checkSystemStatus(system as SystemInformation["data"]);
         } catch (err) {
           console.error(err);
 
@@ -209,7 +237,7 @@ export default function SystemInspectionPage() {
         navigate("/network-test-blocked");
       }
     } catch (error) {
-      toastError(error);
+      // toastError(error);
     }
   };
 
@@ -217,7 +245,7 @@ export default function SystemInspectionPage() {
     try {
       await httpService.get("/network-test/active_by_computer");
     } catch (error) {
-      toastError(error);
+      //toastError(error);
     }
   };
 
@@ -266,7 +294,11 @@ export default function SystemInspectionPage() {
             {!loading && error && <FailurePanel onRetry={loadSystem} />}
 
             {!loading && system && (
-              <InspectionCards system={system} onRegister={onRegister} />
+              <InspectionCards
+                system={system}
+                onRegister={onRegister}
+                registrationStatus={registrationStatus}
+              />
             )}
           </div>
         </div>

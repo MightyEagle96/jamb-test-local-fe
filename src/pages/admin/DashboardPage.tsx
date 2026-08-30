@@ -75,7 +75,6 @@ export default function DashboardPage() {
     try {
       const { data } = await httpService.get("/centres/infractionsCount");
 
-      console.log(data);
       setInfractions(data.data);
     } catch (error) {}
   };

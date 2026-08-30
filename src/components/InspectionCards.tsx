@@ -1,5 +1,7 @@
 import {
   ArrowRight,
+  CheckCircle2,
+  CloudUpload,
   Cpu,
   HardDrive,
   Monitor,
@@ -9,13 +11,19 @@ import {
 
 //import SystemCard from "./SystemCard";
 import type { SystemInformation } from "../types/system";
+import type { Status } from "../pages/user/SystemInspectionPage";
 
 interface Props {
   system: SystemInformation["data"];
   onRegister?: () => void;
+  registrationStatus: Status;
 }
 
-export default function InspectionCards({ system, onRegister }: Props) {
+export default function InspectionCards({
+  system,
+  onRegister,
+  registrationStatus,
+}: Props) {
   return (
     <div className="w-full">
       {/* Header */}
@@ -53,7 +61,7 @@ export default function InspectionCards({ system, onRegister }: Props) {
           </div>
 
           {/* Register action */}
-          <button
+          {/* <button
             type="button"
             onClick={onRegister}
             className="
@@ -81,7 +89,87 @@ export default function InspectionCards({ system, onRegister }: Props) {
           >
             Register Computer
             <ArrowRight size={16} />
-          </button>
+          </button> */}
+
+          {/* Register / Status action */}
+
+          {registrationStatus === "not registered" && (
+            <button
+              type="button"
+              onClick={onRegister}
+              className="
+      inline-flex
+      items-center
+      justify-center
+      gap-2
+      rounded-xl
+      bg-gradient-to-r
+      from-emerald-700
+      via-green-600
+      to-lime-600
+      px-5
+      py-2.5
+      text-sm
+      font-bold
+      text-white
+      shadow-sm
+      transition-all
+      duration-200
+      hover:-translate-y-0.5
+      hover:shadow-md
+      active:scale-[0.98]
+    "
+            >
+              Register Computer
+              <ArrowRight size={16} />
+            </button>
+          )}
+
+          {registrationStatus === "awaiting upload" && (
+            <div
+              className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-xl
+      bg-amber-50
+      px-5
+      py-2.5
+      text-sm
+      font-semibold
+      text-amber-700
+      ring-1
+      ring-inset
+      ring-amber-600/20
+    "
+            >
+              <CloudUpload size={16} />
+              Awaiting Upload
+            </div>
+          )}
+
+          {registrationStatus === "registered" && (
+            <div
+              className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-xl
+      bg-emerald-50
+      px-5
+      py-2.5
+      text-sm
+      font-semibold
+      text-emerald-700
+      ring-1
+      ring-inset
+      ring-emerald-600/20
+    "
+            >
+              <CheckCircle2 size={16} />
+              Registered
+            </div>
+          )}
         </div>
 
         <div className="divide-y divide-slate-100">

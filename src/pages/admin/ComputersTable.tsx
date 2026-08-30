@@ -11,8 +11,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import httpService from "../../services/http.service";
-import { toast } from "sonner";
-import { toastError } from "../../components/CustomToast";
+
 import Swal from "sweetalert2";
 
 interface Computer {

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import type { GridColDef } from "@mui/x-data-grid";
-import { CheckCircle2, Eye, Monitor } from "lucide-react";
+
+import { Loader2, Monitor } from "lucide-react";
 import httpService from "../../services/http.service";
 import ComputersTable from "./ComputersTable";
 
@@ -50,7 +49,6 @@ function ComputerList() {
       const response = await httpService("computers/getall");
 
       setComputers(response.data.data);
-      console.log(response.data);
 
       //setComputers(result.data ?? []);
     } catch (error) {
@@ -66,6 +64,7 @@ function ComputerList() {
 
   return (
     <>
+      {loading && <Loader2 />}
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
 

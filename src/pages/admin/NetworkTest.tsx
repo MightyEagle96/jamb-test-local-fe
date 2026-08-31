@@ -9,6 +9,7 @@ import {
   Trash2,
   Eye,
   ChevronDown,
+  ArrowRight,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import httpService from "../../services/http.service";
@@ -230,19 +231,22 @@ function NetworkTest() {
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
 
-      <div className="mb-8">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Page Title */}
+
         <div className="flex items-center gap-3">
           <div
             className="
-              flex
-              h-12
-              w-12
-              items-center
-              justify-center
-              rounded-2xl
-              bg-emerald-100
-              text-emerald-700
-            "
+        flex
+        h-12
+        w-12
+        shrink-0
+        items-center
+        justify-center
+        rounded-2xl
+        bg-emerald-100
+        text-emerald-700
+      "
           >
             <Network size={24} />
           </div>
@@ -255,188 +259,201 @@ function NetworkTest() {
             </p>
           </div>
         </div>
+
+        {/* View Uploaded Tests */}
+
+        <Link
+          to="/uploaded-network-tests"
+          className="
+      inline-flex
+      shrink-0
+      items-center
+      justify-center
+      gap-2
+      self-start
+      rounded-xl
+      border
+      border-emerald-200
+      bg-emerald-50
+      px-4
+      py-2.5
+      text-sm
+      font-semibold
+      text-emerald-700
+      transition-all
+      duration-200
+      hover:border-emerald-300
+      hover:bg-emerald-100
+      hover:shadow-sm
+      sm:self-auto
+    "
+        >
+          View Uploaded Tests
+          <ArrowRight size={16} />
+        </Link>
       </div>
 
       {/* Create Test */}
 
       <div
         className="
-          rounded-3xl
-          border
-          border-slate-200
-          bg-white
-          p-6
-          shadow-sm
-          sm:p-8
-        "
+    rounded-3xl
+    border
+    border-slate-200
+    bg-white
+    p-5
+    shadow-sm
+    sm:p-6
+  "
       >
-        <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-xl
-                bg-emerald-50
-                text-emerald-700
-              "
-            >
-              <Activity size={20} />
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-slate-800">
-                Create Network Test
-              </h2>
-
-              <p className="text-sm text-slate-500">
-                Configure the duration of the network simulation.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Information */}
-
         <div
           className="
-            mb-8
-            rounded-2xl
-            border
-            border-emerald-100
-            bg-emerald-50/70
-            p-5
-          "
+      flex
+      flex-col
+      gap-5
+      lg:flex-row
+      lg:items-end
+      lg:justify-between
+    "
         >
-          <div className="flex gap-4">
-            <ShieldCheck
-              size={22}
-              className="mt-0.5 shrink-0 text-emerald-600"
-            />
+          {/* Title */}
 
-            <div>
-              <h3 className="font-semibold text-emerald-800">
-                Network Simulation
-              </h3>
+          <div className="lg:min-w-[260px]">
+            <div className="flex items-center gap-3">
+              <div
+                className="
+            flex
+            h-10
+            w-10
+            shrink-0
+            items-center
+            justify-center
+            rounded-xl
+            bg-emerald-50
+            text-emerald-700
+          "
+              >
+                <Activity size={20} />
+              </div>
 
-              <p className="mt-1 text-sm leading-6 text-emerald-700">
-                The network test will measure the connectivity and response
-                performance of computers connected to this centre during the
-                selected period.
-              </p>
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">
+                  Create Network Test
+                </h2>
+
+                <p className="mt-0.5 text-sm text-slate-500">
+                  Configure the network simulation duration.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Duration */}
+          {/* Duration */}
 
-        <div className="max-w-md">
-          <label
-            htmlFor="duration"
-            className="mb-2 block text-sm font-semibold text-slate-700"
-          >
-            Test Duration
-          </label>
-
-          <div className="relative">
-            <Clock3
-              size={19}
-              className="
-                pointer-events-none
-                absolute
-                left-4
-                top-1/2
-                -translate-y-1/2
-                text-slate-400
-              "
-            />
-
-            <input
-              id="duration"
-              type="number"
-              min={1}
-              max={1440}
-              value={duration}
-              onChange={(e) => setDuration(Number(e.target.value))}
-              className="
-                w-full
-                rounded-2xl
-                border
-                border-slate-200
-                bg-slate-50
-                py-4
-                pl-12
-                pr-20
-                text-slate-800
-                outline-none
-                transition
-                focus:border-emerald-500
-                focus:bg-white
-                focus:ring-4
-                focus:ring-emerald-500/10
-              "
-            />
-
-            <span
-              className="
-                pointer-events-none
-                absolute
-                right-4
-                top-1/2
-                -translate-y-1/2
-                text-sm
-                font-medium
-                text-slate-400
-              "
+          <div className="w-full lg:max-w-md">
+            <label
+              htmlFor="duration"
+              className="mb-2 block text-sm font-semibold text-slate-700"
             >
-              minutes
-            </span>
+              Test Duration
+            </label>
+
+            <div className="relative">
+              <Clock3
+                size={18}
+                className="
+            pointer-events-none
+            absolute
+            left-4
+            top-1/2
+            -translate-y-1/2
+            text-slate-400
+          "
+              />
+
+              <input
+                id="duration"
+                type="number"
+                min={1}
+                max={1440}
+                value={duration}
+                onChange={(e) => setDuration(Number(e.target.value))}
+                className="
+            w-full
+            rounded-2xl
+            border
+            border-slate-200
+            bg-slate-50
+            py-3.5
+            pl-11
+            pr-20
+            text-slate-800
+            outline-none
+            transition
+            focus:border-emerald-500
+            focus:bg-white
+            focus:ring-4
+            focus:ring-emerald-500/10
+          "
+              />
+
+              <span
+                className="
+            pointer-events-none
+            absolute
+            right-4
+            top-1/2
+            -translate-y-1/2
+            text-sm
+            font-medium
+            text-slate-400
+          "
+              >
+                minutes
+              </span>
+            </div>
+
+            <p className="mt-1.5 text-xs text-slate-400">
+              Tests below 60 minutes cannot be uploaded.
+            </p>
           </div>
 
-          <p className="mt-2 text-xs text-slate-400">
-            Any network test duration less than 60 minutes will not be uploaded.
-          </p>
-        </div>
+          {/* Create Button */}
 
-        {/* Create Button */}
-
-        <div className="mt-8">
           <button
             onClick={createNetworkTest}
             disabled={creating || !duration || duration <= 0}
             className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-2xl
-              bg-gradient-to-r
-              from-emerald-700
-              to-green-600
-              px-6
-              py-4
-              font-semibold
-              text-white
-              shadow-sm
-              transition-all
-              duration-300
-              hover:-translate-y-0.5
-              hover:shadow-lg
-              disabled:cursor-not-allowed
-              disabled:opacity-60
-              disabled:hover:translate-y-0
-              disabled:hover:shadow-sm
-            "
+        inline-flex
+        shrink-0
+        items-center
+        justify-center
+        gap-2
+        rounded-2xl
+        bg-gradient-to-r
+        from-emerald-700
+        to-green-600
+        px-6
+        py-3.5
+        font-semibold
+        text-white
+        shadow-sm
+        transition-all
+        duration-300
+        hover:-translate-y-0.5
+        hover:shadow-lg
+        disabled:cursor-not-allowed
+        disabled:opacity-60
+        disabled:hover:translate-y-0
+        disabled:hover:shadow-sm
+      "
           >
             <Play size={18} />
 
-            {creating ? "Creating Test..." : "Create Network Test"}
+            {creating ? "Creating..." : "Create Test"}
           </button>
         </div>
       </div>
-
       {/* Existing Tests */}
 
       <div className="mt-8">
@@ -444,7 +461,7 @@ function NetworkTest() {
           <h2 className="text-xl font-bold text-slate-800">Network Tests</h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Previous and active network tests for your centre.
+            View and manage your existing network tests.
           </p>
         </div>
 

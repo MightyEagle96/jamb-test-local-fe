@@ -15,6 +15,7 @@ import NetworkTestBlocked from "../pages/user/FailedTest";
 import NetworkTestWindow from "../pages/user/NetworkTestWindow";
 import NetworkTestConcludedPage from "../pages/user/TestCompleted";
 import ProfilePage from "../pages/admin/ProfilePage";
+import UploadedNetworkTests from "../pages/admin/UploadedNetworkTests";
 
 function MainRoute() {
   const { user, loading } = useAuth();
@@ -33,6 +34,7 @@ function MainRoute() {
     { path: "/infractions", element: <InfractionsPage /> },
     { path: "/computers", element: <ComputerList /> },
     { path: "/network-tests", element: <NetworkTest /> },
+    { path: "/uploaded-network-tests", element: <UploadedNetworkTests /> },
     { path: "/network-tests/:id", element: <NetworkTestPage /> },
     { path: "/profile", element: <ProfilePage centre={user as any} /> },
   ];

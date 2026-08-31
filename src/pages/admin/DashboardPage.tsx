@@ -14,6 +14,7 @@ import { socket } from "../../services/socket.service";
 import Swal from "sweetalert2";
 import { toast } from "sonner";
 import { toastError } from "../../components/CustomToast";
+import { Link } from "react-router-dom";
 
 function DashboardCard({
   title,
@@ -408,28 +409,29 @@ export default function DashboardPage() {
                 readiness of all registered computers before examination day.
               </p>
 
-              <button
+              <Link
+                to="/network-tests"
                 className="
-          mt-8
-          inline-flex
-          items-center
-          gap-2
-          rounded-2xl
-          bg-gradient-to-r
-          from-violet-700
-          to-indigo-600
-          px-6
-          py-4
-          font-semibold
-          text-white
-          transition-all
-          duration-300
-          hover:shadow-lg
-        "
+    mt-8
+    inline-flex
+    items-center
+    gap-2
+    rounded-2xl
+    bg-gradient-to-r
+    from-violet-700
+    to-indigo-600
+    px-6
+    py-4
+    font-semibold
+    text-white
+    transition-all
+    duration-300
+    hover:shadow-lg
+  "
               >
                 <Network size={18} />
                 Create Test
-              </button>
+              </Link>
             </div>
           </div>
         </div>

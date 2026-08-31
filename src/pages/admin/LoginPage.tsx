@@ -11,6 +11,12 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
+    if (!referenceNumber) {
+      toastError("Please enter your reference number.");
+      setLoading(false);
+      return;
+    }
+
     try {
       await httpService.post("/centres/login", {
         referenceNumber,

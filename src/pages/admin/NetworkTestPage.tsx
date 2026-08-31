@@ -685,7 +685,7 @@ function NetworkTestPage() {
           <Metric
             icon={<Activity size={20} />}
             label="Response Throughput"
-            value={test.responseThroughput}
+            value={parseInt(test.responseThroughput).toFixed(2)}
           />
         </div>
       </section>

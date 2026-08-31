@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   Clock3,
-  Eye,
   Monitor,
   Network,
   WifiOff,

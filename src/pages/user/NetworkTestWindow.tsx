@@ -70,6 +70,7 @@ interface NetworkTestPageProps {
   connectedStatus: boolean;
   ipAddress: string;
   question: Question;
+  responses: number;
   saveResponse: (timeLeft: number) => void;
   endTest: () => void;
 }
@@ -80,12 +81,13 @@ function NetworkTestPage({
   connectedStatus,
   ipAddress,
   question,
+  responses,
   saveResponse,
   endTest,
 }: NetworkTestPageProps) {
   const [childTimeLeft, setChildTimeLeft] = useState(0);
 
-  const [responseCount, setResponseCount] = useState(0);
+  const [responseCount, setResponseCount] = useState(responses);
 
   const [lastResponseAt, setLastResponseAt] = useState<Date | null>(null);
 
@@ -481,6 +483,7 @@ function NetworkTestWindow() {
   const [ipAddress, setIpAddress] = useState("");
   const [timeLeft, setTimeLeft] = useState(0);
   const [question, setQuestion] = useState<Question | null>(null);
+  const [responses, setResponses] = useState(0);
   const navigate = useNavigate();
 
   //const onServerLogout
@@ -496,6 +499,10 @@ function NetworkTestWindow() {
           },
         },
       );
+
+      console.log(data);
+
+      setResponses(data.data.responses);
 
       setTimeLeft(data.data.timeLeft);
       setSystem(data.data.computerDetails);
@@ -613,6 +620,7 @@ function NetworkTestWindow() {
           connectedStatus={connected}
           ipAddress={ipAddress}
           question={question as Question}
+          responses={responses}
           saveResponse={saveResponse}
           endTest={endTest}
         />

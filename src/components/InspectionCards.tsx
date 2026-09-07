@@ -60,39 +60,6 @@ export default function InspectionCards({
             </div>
           </div>
 
-          {/* Register action */}
-          {/* <button
-            type="button"
-            onClick={onRegister}
-            className="
-      inline-flex
-      items-center
-      justify-center
-      gap-2
-      rounded-xl
-      bg-gradient-to-r
-      from-emerald-700
-      via-green-600
-      to-lime-600
-      px-5
-      py-2.5
-      text-sm
-      font-bold
-      text-white
-      shadow-sm
-      transition-all
-      duration-200
-      hover:-translate-y-0.5
-      hover:shadow-md
-      active:scale-[0.98]
-    "
-          >
-            Register Computer
-            <ArrowRight size={16} />
-          </button> */}
-
-          {/* Register / Status action */}
-
           {registrationStatus === "not registered" && (
             <button
               type="button"
@@ -226,7 +193,7 @@ export default function InspectionCards({
           </SystemSection>
 
           {/* Network */}
-          <SystemSection title="Network" icon={<Network size={17} />}>
+          {/* <SystemSection title="Network" icon={<Network size={17} />}>
             <SystemRow label="Hostname" value={system.network.hostname} />
 
             <SystemRow
@@ -234,6 +201,22 @@ export default function InspectionCards({
               value={system.network.macAddress}
               mono
             />
+          </SystemSection> */}
+          <SystemSection title="Network" icon={<Network size={17} />}>
+            <SystemRow label="Hostname" value={system.network.hostname} />
+
+            {system.network.adapters.length === 0 ? (
+              <SystemRow label="Network Adapters" value="No adapters found" />
+            ) : (
+              system.network.adapters.map((adapter, index) => (
+                <SystemRow
+                  key={`${adapter.macAddress}-${index}`}
+                  label={`${adapter.name} (${adapter.type})`}
+                  value={adapter.macAddress}
+                  mono
+                />
+              ))
+            )}
           </SystemSection>
 
           {/* Identity */}
@@ -246,36 +229,9 @@ export default function InspectionCards({
               value={system.identity.serialNumber}
               mono
             />
+            <SystemRow label="UUID" value={system.identity.uuid} mono />
           </SystemSection>
         </div>
-
-        {/* Action */}
-        {/* <div className="border-t border-slate-100 bg-slate-50 p-4">
-          <button
-            onClick={onRegister}
-            className="
-        w-full
-        rounded-xl
-        bg-gradient-to-r
-        from-emerald-700
-        via-green-600
-        to-lime-600
-        px-6
-        py-3
-        text-sm
-        font-bold
-        text-white
-        shadow-sm
-        transition-all
-        duration-200
-        hover:-translate-y-0.5
-        hover:shadow-md
-        active:scale-[0.98]
-      "
-          >
-            Register Computer →
-          </button>
-        </div> */}
       </div>
     </div>
   );

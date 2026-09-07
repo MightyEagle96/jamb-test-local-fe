@@ -215,17 +215,35 @@ export default function DashboardPage() {
       <div className="space-y-10">
         {/* Hero */}
 
-        <div className="rounded-[32px] bg-gradient-to-r from-emerald-900 via-green-700 to-lime-600 p-8 text-white shadow-xl lg:p-10">
-          <p className="text-green-100">Welcome back</p>
+        <div className="flex flex-col gap-4 rounded-2xl bg-gradient-to-r from-emerald-900 via-green-700 to-lime-600 px-6 py-5 text-white shadow-lg md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-green-200">
+              Welcome back
+            </p>
 
-          <h1 className="mt-2 text-4xl font-black lg:text-5xl">
-            JAMB TEST Dashboard
-          </h1>
+            <h1 className="mt-1 text-2xl font-black lg:text-3xl">
+              JAMB TEST Dashboard
+            </h1>
 
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-green-100">
-            Monitor registered computers, pending registrations, network
-            simulations and examination infractions from one central location.
-          </p>
+            <p className="mt-2 max-w-2xl text-sm text-green-100">
+              Monitor computers, registrations, network simulations and
+              examination activities from one central location.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="rounded-xl bg-white/10 px-4 py-2 backdrop-blur-sm">
+              <p className="text-[10px] uppercase tracking-wider text-green-200">
+                System Status
+              </p>
+
+              <div className="mt-1 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-300" />
+
+                <span className="text-xs font-bold">Operational</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Statistics */}

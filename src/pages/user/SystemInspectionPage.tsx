@@ -33,7 +33,7 @@ export default function SystemInspectionPage() {
         params: {
           serialNumber: systemInfo.identity.serialNumber,
 
-          macAddress: systemInfo.network.macAddress,
+          uuid: systemInfo.identity.uuid,
         },
       });
 
@@ -226,7 +226,7 @@ export default function SystemInspectionPage() {
       const { data } = await httpService.get("/computers/one", {
         params: {
           serialNumber: system?.identity.serialNumber,
-          macAddress: system?.network.macAddress,
+          uuid: system?.identity.uuid,
           networkTest: testData._id,
         },
       });

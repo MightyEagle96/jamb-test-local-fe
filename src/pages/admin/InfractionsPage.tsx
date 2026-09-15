@@ -10,6 +10,8 @@ function InfractionsPage() {
     pageSize: 50,
   });
 
+  const [loading, setLoading] = useState(false);
+
   const [infractions, setInfractions] = useState([]);
   const [infractionsCount, setInfractionsCount] = useState(0);
   const columns: GridColDef[] = [
@@ -129,6 +131,7 @@ function InfractionsPage() {
     // },
   ];
   const getInfractions = async () => {
+    setLoading(true);
     try {
       const { data } = await httpService.get("/centres/infractions", {
         params: {
@@ -139,8 +142,9 @@ function InfractionsPage() {
 
       setInfractions(data.data);
       setInfractionsCount(data.infractionsCount);
-      console.log(data);
     } catch (error) {}
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -188,6 +192,7 @@ function InfractionsPage() {
           <DataGrid
             rows={infractions}
             columns={columns}
+            loading={loading}
             // getRowId={(row) => row._id}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}

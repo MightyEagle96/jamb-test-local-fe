@@ -588,7 +588,7 @@ function NetworkTest() {
                       {/* Throughput */}
                       <td className="px-6 py-5">
                         <span className="font-semibold text-slate-700">
-                          {test.responseThroughput}
+                          {parseInt(test.responseThroughput).toFixed(2)} Mbps
                         </span>
                       </td>
 

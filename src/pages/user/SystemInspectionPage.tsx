@@ -29,21 +29,17 @@ export default function SystemInspectionPage() {
 
   const checkSystemStatus = async (systemInfo: SystemInformation["data"]) => {
     try {
-      const response = await httpService.get("computers/one", {
-        params: {
-          serialNumber: systemInfo.identity.serialNumber,
-
-          uuid: systemInfo.identity.uuid,
-        },
+      const { data } = await httpService.post("computers/one", {
+        computer: systemInfo,
       });
 
-      if (response.status !== 404 && response.data.status === true) {
+      if (data._id !== "") {
         setRegistrationStatus("registered");
-      } else if (response.status !== 404 && response.data.status === false) {
+      } else {
         setRegistrationStatus("awaiting upload");
       }
     } catch (error) {
-      toastError(error);
+      //toastError(error);
     }
   };
 
@@ -58,7 +54,7 @@ export default function SystemInspectionPage() {
 
       checkSystemStatus(response.data);
 
-      toast.success("System inspection completed.");
+      //toast.success("System inspection completed.");
     } catch (err) {
       console.error(err);
 
@@ -221,18 +217,20 @@ export default function SystemInspectionPage() {
     // Call the registration endpoint here.
   };
 
-  const isQualifiedToTakeTest = async (testData: any) => {
+  const isQualifiedToTakeTest = async (
+    testData: any,
+    systemInfo: SystemInformation["data"],
+  ) => {
     try {
-      const { data } = await httpService.get("/computers/one", {
-        params: {
-          serialNumber: system?.identity.serialNumber,
-          uuid: system?.identity.uuid,
-          networkTest: testData._id,
-        },
+      const { data } = await httpService.post("computers/one", {
+        computer: systemInfo,
+        networkTest: testData._id,
       });
 
-      if (data.status === true) {
-        navigate(`/network-test?id=${testData._id}&computer=${data.computer}`);
+      const computer = data.data;
+
+      if (computer._id !== "" && computer._id !== undefined) {
+        navigate(`/network-test?id=${testData._id}&computer=${computer._id}`);
       } else {
         navigate("/network-test-blocked");
       }
@@ -264,7 +262,7 @@ export default function SystemInspectionPage() {
 
     const testStatus = (data: any) => {
       if (!system) return;
-      isQualifiedToTakeTest(data);
+      isQualifiedToTakeTest(data, system);
     };
 
     socket.on("connect", onConnect);

@@ -24,23 +24,33 @@ function InfractionsPage() {
     {
       field: "serialNumber",
       headerName: "Serial Number",
-      flex: 1,
-      minWidth: 160,
-      valueGetter: (_, row) => row.computer?.serialNumber ?? "—",
+
+      minWidth: 120,
+      valueGetter: (_, row) => row.computer?.serialNumber || "—",
+    },
+
+    {
+      field: "uuid",
+      headerName: "UUID",
+
+      minWidth: 200,
+      valueGetter: (_, row) => row.computer?.uuid || "—",
     },
 
     {
       field: "macAddress",
       headerName: "MAC Address",
-      flex: 1,
+
       minWidth: 170,
-      valueGetter: (_, row) => row.computer?.macAddress ?? "—",
+      valueGetter: (_, row) =>
+        row.computer?.macAddress.map((mac: any) => mac.macAddress).join(", ") ??
+        "—",
     },
 
     // {
     //   field: "referenceNumber",
     //   headerName: "",
-    //   flex: 1,
+    //
     //   minWidth: 180,
     //   valueGetter: (_, row) => row.principal?.referenceNumber ?? "—",
     // },
@@ -53,31 +63,31 @@ function InfractionsPage() {
       valueGetter: (_, row) => row.principal?.centreName ?? "—",
     },
 
-    {
-      field: "centresInvolved",
-      headerName: "Centres Involved",
-      width: 150,
-      headerAlign: "center",
-      align: "center",
+    // {
+    //   field: "centresInvolved",
+    //   headerName: "Centres Involved",
+    //   width: 150,
+    //   headerAlign: "center",
+    //   align: "center",
 
-      renderCell: (params) => (
-        <span
-          className="
-          inline-flex
-          items-center
-          rounded-full
-          bg-red-100
-          px-3
-          py-1
-          text-xs
-          font-bold
-          text-red-700
-        "
-        >
-          {params.value} Centres
-        </span>
-      ),
-    },
+    //   renderCell: (params) => (
+    //     <span
+    //       className="
+    //       inline-flex
+    //       items-center
+    //       rounded-full
+    //       bg-red-100
+    //       px-3
+    //       py-1
+    //       text-xs
+    //       font-bold
+    //       text-red-700
+    //     "
+    //     >
+    //       {params.value} Centres
+    //     </span>
+    //   ),
+    // },
 
     {
       field: "createdAt",

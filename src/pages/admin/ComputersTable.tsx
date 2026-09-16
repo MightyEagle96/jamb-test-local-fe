@@ -51,7 +51,7 @@ export interface Computer {
       type: string;
     }[];
   };
-
+  computerIdentifier: string;
   identity: {
     uuid: string;
     serialNumber: string;
@@ -791,11 +791,7 @@ function ComputersTable({ computers, onRefresh }: Props) {
     try {
       await httpService.delete("/computers/deleteone", {
         params: {
-          serialNumber: computer.identity.serialNumber,
-
-          macAddress:
-            ethernetAdapters[0]?.macAddress ||
-            computer.network?.adapters?.[0]?.macAddress,
+          computerIdentifier: computer.computerIdentifier,
         },
       });
 

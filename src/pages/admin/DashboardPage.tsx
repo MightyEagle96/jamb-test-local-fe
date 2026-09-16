@@ -184,9 +184,40 @@ export default function DashboardPage() {
         setUploading(true);
         try {
           const { data } = await httpService.get("/computers/upload");
-          toast.success(data);
 
-          getInfractionsCount();
+          if (data) {
+            await Swal.fire({
+              icon: "success",
+              title: "Systems Pushed Online",
+              html: `
+    <div style="text-align: left;">
+      <p>
+        Your computer systems have been successfully pushed online.
+      </p>
+
+      <p>
+        <strong>JAMB TEST Network is currently investigating the
+        uploaded systems.</strong>
+        This process verifies the systems and identifies any systems
+        that may have been flagged for infractions.
+      </p>
+
+      <p>
+        <strong>You do not need to wait.</strong>
+        Please check back in about <strong>1–2 minutes</strong>.
+      </p>
+
+      <p>
+        Then click <strong>Download Computers</strong> to download the
+        list of computers verified by JAMB TEST Network.
+      </p>
+    </div>
+  `,
+              confirmButtonText: "Okay, Got It",
+            });
+
+            getInfractionsCount();
+          }
           //console.log(data);
         } catch (e) {
           toastError(e);
@@ -308,9 +339,9 @@ export default function DashboardPage() {
                   <Upload size={30} />
                 </div>
 
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700">
+                {/* <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700">
                   Recommended
-                </span>
+                </span> */}
               </div>
 
               <h3 className="mt-8 text-2xl font-bold text-slate-800">

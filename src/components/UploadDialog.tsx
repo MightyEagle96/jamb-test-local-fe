@@ -273,7 +273,7 @@ export default function NetworkTestUploadDialog({
             icon={<WifiOff size={19} />}
             title="Computers With Network Losses"
             description="No more than 5 computers may experience network losses."
-            value={`${computersWithNetworkLosses} computers`}
+            value={`${computersWithNetworkLosses} computer(s)`}
             passed={computersWithLossesPassed}
           />
 
@@ -281,7 +281,7 @@ export default function NetworkTestUploadDialog({
             icon={<AlertTriangle size={19} />}
             title="Total Network Losses"
             description="Total network losses must not exceed 45."
-            value={`${totalNetworkLosses} losses`}
+            value={`${totalNetworkLosses} loss(es)`}
             passed={totalLossesPassed}
           />
         </div>

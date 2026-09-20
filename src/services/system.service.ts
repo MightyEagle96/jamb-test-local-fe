@@ -3,7 +3,7 @@ import type { SystemInformation } from "../types/system";
 
 const api = axios.create({
   baseURL: "http://127.0.0.1:45454/api/v1",
-  timeout: 8000,
+  timeout: 60_000,
 });
 
 export const getSystemInformation = async () => {

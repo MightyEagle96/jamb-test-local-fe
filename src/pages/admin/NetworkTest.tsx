@@ -7,7 +7,6 @@ import {
   Play,
   Trash2,
   Eye,
-  ChevronDown,
   ArrowRight,
 } from "lucide-react";
 import Swal from "sweetalert2";
@@ -47,7 +46,6 @@ function NetworkTest() {
   const [duration, setDuration] = useState<number>(30);
   const [creating, setCreating] = useState(false);
   const [networkTests, setNetworkTests] = useState<NetworkTest[]>([]);
-  const [openAction, setOpenAction] = useState<string | null>(null);
 
   const createNetworkTest = async () => {
     if (!duration || duration <= 0) {
@@ -215,17 +213,6 @@ function NetworkTest() {
     viewNetworkTest();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setOpenAction(null);
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
@@ -607,128 +594,75 @@ function NetworkTest() {
                           </p>
                         </div>
                       </td>
-                      <td className="relative px-6 py-5">
-                        <div
-                          className="relative inline-block"
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setOpenAction(
-                                openAction === test.examId ? null : test.examId,
-                              )
-                            }
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-2">
+                          {/* View */}
+                          <Link
+                            to={`/network-tests/${test._id}`}
+                            title="View network test"
                             className="
         inline-flex
+        h-9
+        w-9
         items-center
-        gap-2
+        justify-center
         rounded-xl
         border
         border-slate-200
         bg-white
-        px-3
-        py-2
-        text-sm
-        font-semibold
-        text-slate-600
+        text-slate-500
         shadow-sm
         transition
         hover:border-emerald-200
         hover:bg-emerald-50
-        hover:text-emerald-700
+        hover:text-emerald-600
       "
                           >
-                            Actions
-                            <ChevronDown
-                              size={15}
-                              className={`
-          transition-transform
-          ${openAction === test.examId ? "rotate-180" : ""}
-        `}
-                            />
+                            <Eye size={17} />
+                          </Link>
+
+                          {/* Delete */}
+                          <button
+                            type="button"
+                            disabled={test.status === "uploaded"}
+                            onClick={() => deleteNetworkTest(test._id)}
+                            title={
+                              test.status === "uploaded"
+                                ? "Uploaded tests cannot be deleted"
+                                : "Delete network test"
+                            }
+                            className={`
+        inline-flex
+        h-9
+        w-9
+        items-center
+        justify-center
+        rounded-xl
+        border
+        shadow-sm
+        transition
+
+        ${
+          test.status === "uploaded"
+            ? `
+              cursor-not-allowed
+              border-slate-100
+              bg-slate-50
+              text-slate-300
+            `
+            : `
+              border-red-100
+              bg-white
+              text-red-500
+              hover:border-red-200
+              hover:bg-red-50
+              hover:text-red-600
+            `
+        }
+      `}
+                          >
+                            <Trash2 size={17} />
                           </button>
-
-                          {openAction === test.examId && (
-                            <div
-                              className="
-          absolute
-          right-0
-          z-50
-          mt-2
-          w-44
-          overflow-hidden
-          rounded-2xl
-          border
-          border-slate-200
-          bg-white
-          p-1.5
-          shadow-xl
-        "
-                            >
-                              {/* View */}
-                              <Link
-                                to={`/network-tests/${test._id}`}
-                                onClick={() => setOpenAction(null)}
-                                className="
-    flex
-    w-full
-    items-center
-    gap-3
-    rounded-xl
-    px-3
-    py-2.5
-    text-left
-    text-sm
-    font-medium
-    text-slate-600
-    transition
-    hover:bg-emerald-50
-    hover:text-emerald-700
-  "
-                              >
-                                <Eye size={17} />
-                                View
-                              </Link>
-
-                              {/* Delete */}
-                              <button
-                                type="button"
-                                disabled={test.status === "uploaded"}
-                                onClick={() => {
-                                  setOpenAction(null);
-                                  deleteNetworkTest(test._id);
-                                }}
-                                title={
-                                  test.status === "uploaded"
-                                    ? "Uploaded tests cannot be deleted"
-                                    : "Delete network test"
-                                }
-                                className={`
-            flex
-            w-full
-            items-center
-            gap-3
-            rounded-xl
-            px-3
-            py-2.5
-            text-left
-            text-sm
-            font-medium
-            transition
-
-            ${
-              test.status === "uploaded"
-                ? "cursor-not-allowed text-slate-300"
-                : "text-red-500 hover:bg-red-50 hover:text-red-600"
-            }
-          `}
-                              >
-                                <Trash2 size={17} />
-                                Delete
-                              </button>
-                            </div>
-                          )}
                         </div>
                       </td>
                     </tr>

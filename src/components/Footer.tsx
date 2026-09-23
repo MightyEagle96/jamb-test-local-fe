@@ -29,7 +29,7 @@ function Footer() {
 
           {/* Right */}
           <div className="text-sm text-slate-500">
-            <p>Version 2.0.0</p>
+            <p>Version 2.0.1</p>
 
             <p className="mt-1">
               © {new Date().getFullYear()} Joint Admissions & Matriculation

@@ -5,7 +5,7 @@ export const baseURL = `${window.location.origin.replace("5173", "3000")}/api`;
 const httpService = axios.create({
   baseURL,
   withCredentials: true,
-  timeout: 60_000,
+  timeout: 180_000,
   headers: {
     "Content-Type": "application/json",
   },
